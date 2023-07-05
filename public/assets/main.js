@@ -6,12 +6,14 @@ const IS_UNSAFE = typeof unsafeWindow !== 'undefined',
     noop = () => { },
     global = IS_UNSAFE ? unsafeWindow : globalThis ?? window,
     { JSON, document: document$1 } = global,
+    isPlainObject = (param) => param instanceof Object && Object.getPrototypeOf(param) === Object.prototype,
     isUndef = (param) => typeof param === 'undefined',
     isString = (param) => typeof param === 'string',
     isNumber = (param) => typeof param === 'number',
     isInt = (param) => Number.isInteger(param),
     isFloat = (param) => isNumber(param) && parseFloat(param) === param,
     isNumeric = (param) => isInt(param) || isFloat(param) || /^-?(?:[\d]+\.)?\d+$/.test(param),
+    isArray = (param) => Array.isArray(param),
     isNull = (param) => param === null,
     isCallable = (param) => typeof param === 'function',
     isFunction = isCallable;
@@ -38,6 +40,39 @@ function runAsync(callback, ...args)
     {
         setTimeout(callback, 0, ...args);
     }
+}
+
+
+
+function isValidSelector(selector)
+{
+
+    try
+    {
+        return isString(selector) && null === document$1.createElement('template').querySelector(selector);
+
+    } catch (e)
+    {
+        return false;
+    }
+
+}
+
+
+function toCamel(name = '')
+{
+
+    if (!isString(name))
+    {
+        throw new TypeError('name must be a String');
+    }
+
+    let index;
+    while (-1 < (index = name.indexOf("-")))
+    {
+        name = name.slice(0, index) + name.slice(index + 1, 1).toUpperCase() + name.slice(index + 2);
+    }
+    return name;
 }
 
 
@@ -492,14 +527,57 @@ class GameObject
 
     world;
 
-    x = 0;
-    y = 0;
-    width = 0;
-    height = 0;
+    /**
+     * @abstract
+     */
+    get x()
+    {
+
+        throw new Error(getClass(this) + '.x not implemented');
+
+    }
+
+    /**
+     * @abstract
+     */
+    get y()
+    {
+        throw new Error(getClass(this) + '.y not implemented');
+
+    }
+
+    /**
+     * @abstract
+     */
+
+    get width()
+    {
+        throw new Error(getClass(this) + '.width not implemented');
+
+    }
+    /**
+     * @abstract
+     */
+    get height()
+    {
+        throw new Error(getClass(this) + '.height not implemented');
+
+    }
+
     isEnemy = false;
     // gain score when intersecting non ennemy object || intersecting ennemy + attacking
     scoreGain = 0;
 
+
+    get name()
+    {
+        return getClass(this);
+    }
+
+    get ctx()
+    {
+        return this.world.ctx;
+    }
 
     #box;
     get box()
@@ -682,7 +760,7 @@ class Hiro extends GameObject
 {
 
 
-    hp = 3; //à définir 
+    hp = 6; //à définir 
 
     // box
     x = 100;
@@ -815,6 +893,54 @@ class Hiro extends GameObject
     intersections()
     {
 
+        for (let item of this.world.objects)
+        {
+            if (item === this)
+            {
+                continue;
+            }
+
+
+            if (item.isIntersecting(this))
+            {
+
+
+
+
+                if (item.scoreGain > 0)
+                {
+                    if (!item.isEnemy || this.isAttacking)
+                    {
+                        this.world.score += item.scoreGain;
+                        // do something to the item (animation and destroy)
+                        this.world.trigger('scoregain', { item });
+
+                    }
+                    // lose hp
+                    else if (item.isEnemy)
+                    {
+                        this.hp--;
+                        this.world.trigger('hploss', { item });
+                        if (this.hp <= 0)
+                        {
+                            this.world.pause();
+                            alert('You are dead !!!');
+                            this.world.trigger('dead', { item: this });
+                        }
+
+                    }
+                    console.debug('intersecting', item.name);
+                }
+
+
+            }
+
+
+
+        }
+
+
+
     }
 
 
@@ -826,26 +952,42 @@ const STAGES = [...Array(8)].map((_, n) => WORLDS + '/stage' + (n + 1) + '.png')
 
 
 
-class Stage
+class Stage extends GameObject
 {
 
 
+    // STAGES[level]
+    level = 0;
 
-    level = 1;
+    // number of loops n * (deltaX === width)
+    loops = 0;
 
-    scrollSpeed = 10;
+
+    // max loops before clearing stage
+    get maxLoops()
+    {
+
+        return this.world.loopsToClearStage;
+    }
+
+
+    speed = 10;
     deltaX = 0;
+
+
+    // GameObject implementation
+
+    x = 0;
+    y = 0;
 
     get width()
     {
-        return decode(this.world.canvas.width);
-
-
+        return this.world.width;
     }
 
     get height()
     {
-        return decode(this.world.canvas.height);
+        return this.world.height;
     }
 
     #image;
@@ -864,21 +1006,31 @@ class Stage
         return this.#image;
     }
 
-    constructor(world)
-    {
-        this.world = world;
-    }
 
 
 
     draw()
     {
-        const { ctx } = this.world;
-        let { decor } = this;
-        this.deltaX += this.scrollSpeed;
+
+
+        const { decor, ctx } = this;
+        this.deltaX += this.speed;
         if (this.deltaX >= this.width)
         {
             this.deltaX = 0;
+            this.loops++;
+
+            console.debug(this.loops);
+
+            if (this.loops >= this.maxLoops)
+            {
+                this.world.pause();
+                this.world.trigger('stagecleared');
+
+                alert('stage cleared !!!');
+
+            }
+
 
         }
 
@@ -1107,6 +1259,163 @@ class EventManager
 
 const instance = new EventManager();
 
+let api = {
+
+    set(elem, attr, value)
+    {
+        if (nullUndef.includes(value))
+        {
+            this.remove(elem, attr);
+        }
+
+        getAttrs(attr).forEach(x =>
+        {
+            elem.dataset[x] = encode(value);
+        });
+    },
+    get(elem, attr, fallback = null)
+    {
+        let result = getAttrs(attr).map(x => decode(elem.dataset[x])).map(x => !nullUndef.includes(x) ? x : fallback);
+
+        if (result.length <= 1)
+        {
+            return result[0] ?? fallback;
+        }
+
+        return result;
+    },
+    remove(elem, attr)
+    {
+        getAttrs(attr).forEach(x => delete elem.dataset[x]);
+    }
+
+
+}, undef, nullUndef = [null, undef];
+
+
+
+function getAttrs(attr)
+{
+    let result = [];
+
+    if (isString(attr))
+    {
+        if (attr.startsWith('data-'))
+        {
+            attr = attr.slice(5);
+        }
+        result = [toCamel(attr)];
+    }
+
+
+    if (isArray(attr))
+    {
+        result = result.concat(...attr.map(x => getAttrs(x)));
+    }
+
+    return result;
+}
+
+
+
+
+function getElem(elem)
+{
+    if (hasDataset(elem))
+    {
+        return [elem];
+    }
+
+    if (elem instanceof NodeList)
+    {
+        return [...elem];
+    }
+
+    if (isArray(elem))
+    {
+        return elem.filter(x => hasDataset(x));
+    }
+
+    return isValidSelector(elem) ? [...document.querySelectorAll(elem)] : [];
+}
+
+function hasDataset(elem)
+{
+    return elem instanceof Object && elem.dataset instanceof DOMStringMap;
+}
+
+
+
+
+
+/**
+ * data-attribute reader/setter
+ * @param {Node|NodeList|String} elem 
+ * @param {String} attr 
+ * @param {Any} [value]
+ */
+function dataset(elem, attr, value)
+{
+
+    elem = getElem(elem);
+
+
+    function get(attr, fallback = null)
+    {
+
+        let x = elem[0];
+        if (hasDataset(x))
+        {
+            return api.get(x, attr, fallback);
+        }
+
+        return fallback;
+    }
+
+
+    function set(attr, value)
+    {
+        if (isPlainObject(attr))
+        {
+
+            for (let key in attr)
+            {
+                set(key, attr[key]);
+            }
+        }
+        else
+        {
+            elem.forEach(x => api.set(x, attr, value));
+        }
+
+        return $this;
+
+    }
+
+
+    function remove(attr)
+    {
+        elem.forEach(x => api.remove(x, attr));
+        return $this;
+    }
+
+
+    const $this = { get, set, remove };
+
+    switch (arguments.length)
+    {
+        case 2:
+            return get(attr);
+
+        case 3:
+            return set(attr, value);
+
+    }
+
+    return $this;
+
+}
+
 let init = false;
 
 
@@ -1119,6 +1428,9 @@ class GameWorld
     timeout = null;
 
     score = 0;
+
+    // ~60 secs
+    loopsToClearStage = 20;
 
     objects = [];
 
@@ -1153,6 +1465,7 @@ class GameWorld
         this.chrono = new Chronometer(false);
         this.displayScore = element.querySelector('#score');
         this.displayTime = element.querySelector('#time');
+        this.displayHP = element.querySelector('#lives');
         this.canvas = element.querySelector('canvas');
 
         EventManager.mixin(this, false);
@@ -1244,7 +1557,7 @@ class GameWorld
         }
 
 
-        const { displayScore, displayTime } = this;
+        const { displayScore, displayTime, displayHP } = this;
 
 
 
@@ -1259,6 +1572,8 @@ class GameWorld
         // this is generated after as score can change when drawing
         displayScore.innerHTML = this.score;
         displayTime.innerHTML = this.time;
+
+        dataset(displayHP, 'lives', this.hero.hp);
 
 
         this.timeout = setTimeout(() =>

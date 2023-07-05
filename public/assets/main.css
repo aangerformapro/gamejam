@@ -62,4 +62,28 @@ body {
   font-size: 32px;
   text-shadow: 6px 6px 5px #000000;
 }
+.data #lives {
+  position: absolute;
+  left: calc(50% - 50px);
+  top: -16px;
+  width: 80px;
+  height: 80px;
+  background-size: contain;
+  background-position: center center;
+}
+.data #lives[data-lives] {
+  background-image: url("./pictures/ui/hp/1.png");
+}
+.data #lives[data-lives="4"] {
+  background-image: url("./pictures/ui/hp/2.png");
+}
+.data #lives[data-lives="3"] {
+  background-image: url("./pictures/ui/hp/3.png");
+}
+.data #lives[data-lives="2"] {
+  background-image: url("./pictures/ui/hp/4.png");
+}
+.data #lives[data-lives="1"], .data #lives[data-lives="0"] {
+  background-image: url("./pictures/ui/hp/5.png");
+}
 /*# sourceMappingURL=main.css.map */
