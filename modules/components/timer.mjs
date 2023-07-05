@@ -21,7 +21,7 @@ const DIVIDERS = {
 
 export class Chronometer
 {
-    #start;
+    #start = 0;
     #running = false;
     #paused = false;
     #elapsed = 0;
@@ -35,7 +35,7 @@ export class Chronometer
 
     get stopped()
     {
-        return !this.start;
+        return this.#start === 0;
     }
 
 
@@ -85,8 +85,9 @@ export class Chronometer
             return this.#elapsed;
         }
         this.#running = false;
+        let start = this.#start;
         this.#start = 0;
-        return this.#elapsed = +new Date() - this.#start;
+        return this.#elapsed = +new Date() - start;
     }
 
 

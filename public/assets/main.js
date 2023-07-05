@@ -3,6 +3,7 @@
 
 
 const IS_UNSAFE = typeof unsafeWindow !== 'undefined',
+    noop = () => { },
     global = IS_UNSAFE ? unsafeWindow : globalThis ?? window,
     { JSON, document: document$1 } = global,
     isUndef = (param) => typeof param === 'undefined',
@@ -13,7 +14,7 @@ const IS_UNSAFE = typeof unsafeWindow !== 'undefined',
     isNumeric = (param) => isInt(param) || isFloat(param) || /^-?(?:[\d]+\.)?\d+$/.test(param),
     isNull = (param) => param === null,
     isCallable = (param) => typeof param === 'function',
-    isFunction = isCallable;
+    isFunction = isCallable;
 
 
 
@@ -29,6 +30,14 @@ function getClass(param)
         return Object.getPrototypeOf(param).constructor.name;
     }
 
+}
+
+function runAsync(callback, ...args)
+{
+    if (isFunction(callback))
+    {
+        setTimeout(callback, 0, ...args);
+    }
 }
 
 
@@ -207,7 +216,7 @@ const MILISECOND = 1,
     SECOND = 1000,
     MINUTE = 60 * SECOND,
     HOUR = 60 * MINUTE,
-    DAY = 24 * HOUR;
+    DAY = 24 * HOUR;
 
 
 const DIVIDERS = {
@@ -220,7 +229,7 @@ const DIVIDERS = {
 
 class Chronometer
 {
-    #start;
+    #start = 0;
     #running = false;
     #paused = false;
     #elapsed = 0;
@@ -234,7 +243,7 @@ class Chronometer
 
     get stopped()
     {
-        return !this.start;
+        return this.#start === 0;
     }
 
 
@@ -284,8 +293,9 @@ class Chronometer
             return this.#elapsed;
         }
         this.#running = false;
+        let start = this.#start;
         this.#start = 0;
-        return this.#elapsed = +new Date() - this.#start;
+        return this.#elapsed = +new Date() - start;
     }
 
 
@@ -429,8 +439,116 @@ class TimeReader
 
 }
 
-const
-    PICTURES = './assets/pictures',
+class Box
+{
+
+
+    static of(gameobj)
+    {
+        return new Box(gameobj);
+    }
+
+
+    min = {
+        x: 0,
+        y: 0,
+    };
+
+    max = {
+        x: 0,
+        y: 0,
+    };
+
+
+    constructor({ x, y, width, height })
+    {
+        this.min.x = x;
+        this.max.x = x + width;
+        this.min.y = y;
+        this.max.y = y + height;
+    }
+
+    /**
+     * @link https://github.com/mrdoob/three.js/blob/dev/src/math/Box2.js
+     */
+    intersects(box)
+    {
+        if (box instanceof Box === false)
+        {
+            return false;
+        }
+
+        return box.max.x < this.min.x || box.min.x > this.max.x ||
+            box.max.y < this.min.y || box.min.y > this.max.y ? false : true;
+
+    }
+}
+
+
+
+class GameObject
+{
+
+
+    world;
+
+    x = 0;
+    y = 0;
+    width = 0;
+    height = 0;
+    isEnemy = false;
+    // gain score when intersecting non ennemy object || intersecting ennemy + attacking
+    scoreGain = 0;
+
+
+    #box;
+    get box()
+    {
+        return this.#box ??= Box.of(this);
+
+    }
+
+
+    isIntersecting(obj)
+    {
+        if (obj instanceof GameObject === false)
+        {
+            return false;
+        }
+
+        return this.box.intersects(obj.box);
+    }
+
+
+    /**
+     * @abstract
+     */
+    draw()
+    {
+        throw new Error(getClass(this) + '.draw() is not implemented');
+    }
+
+
+
+    constructor(world)
+    {
+        if (world instanceof GameWorld === false)
+        {
+            throw new TypeError('Invalid world !!!');
+        }
+
+        this.world = world;
+    }
+
+
+
+
+
+
+
+}
+
+const PICTURES = './assets/pictures',
     WORLDS = PICTURES + '/worlds',
     HERO = PICTURES + '/hiro';
 
@@ -439,7 +557,7 @@ let loading = 0;
 const listeners = new Set();
 
 
-function createLoader(fn)
+function createLoader(fn = noop)
 {
 
     let count = 0;
@@ -466,22 +584,16 @@ function createLoader(fn)
 
 }
 
-const ANIMATIONS = {
-    left: [...Array(9)].map((_, n) =>
-        HERO + '/left/' + (n + 1) + '.png'
-    ),
-    right: [...Array(9)].map((_, n) =>
-        HERO + '/right/' + (n + 1) + '.png'
-    ),
-};
+const imageLoader = createLoader();
 
 
-const imageLoader = createLoader(() => console.debug('all loaded'));
-
-
-function animate(sprites)
+function animate(sprites, loop = true)
 {
-    let index = 0, counter = 0;
+    let
+        index = 0,
+        counter = 0;
+
+
     const images = sprites.map(src =>
     {
         const img = new Image();
@@ -494,6 +606,9 @@ function animate(sprites)
     return () =>
     {
 
+        // ends animation with a false
+        let flag = true;
+
         counter++;
 
         if ((counter % 4) === 0)
@@ -501,125 +616,206 @@ function animate(sprites)
             index++;
         }
 
+
         if (index >= images.length)
         {
             index = 0;
+            flag = loop;
         }
-        return images[index] ?? images[0];
+
+
+        return flag && images[index];
     };
 
 }
 
 
 
-const
-    animationLeft = animate(ANIMATIONS.left),
-    animationRight = animate(ANIMATIONS.right);
+
+const STATES = new Map([
+    [
+        'moving', [
+            // sprites
+            [...Array(9)].map((_, n) => HERO + '/moving/' + (n + 1) + '.png'),
+
+            //can loop
+            true
+        ]
+
+    ],
+    [
+        'attacking', [
+            [...Array(6)].map((_, n) => HERO + '/attacking/' + (n + 1) + '.png'),
+            // cannot loop
+            false
+        ]
+    ],
+
+]);
 
 
-class Direction extends BackedEnum
+
+class HiroStates extends BackedEnum
 {
-    static LEFT = new Direction('left');
-    static RIGHT = new Direction('right');
+    static MOVING = new HiroStates('moving');
+    static ATTACKING = new HiroStates('attacking');
 
 
 
-    get method()
+    get sprites()
     {
-        return this.value === 'left' ? animationLeft : animationRight;
+        return STATES.get(this.value)[0];
+    }
+
+    #animation;
+
+    get animation()
+    {
+        return this.#animation ??= animate(...STATES.get(this.value));
     }
 }
 
 
 
 
-class Hiro
+class Hiro extends GameObject
 {
 
-    element;
+
     hp = 3; //à définir 
-    jumpHeight = 200; //basée sur des pixels
-    gravity = 1; //Attraper des modificateurs ?
-    jumpEventActive = true; // Désactiver la fonction de saut si le personnage est déjà en l'air => false
+
+    // box
     x = 100;
     y = 350;
+    width = 150;
+    height = 150;
 
+    // jump limits
     minY = 150;
     maxY = 350;
-    isJumping = false;
+
+    // jump strength (in px)
+    gravity = 1;
+    jumpStep = 15;
     deltaY = 0;
 
-    direction = Direction.RIGHT;
+    // state jumping
+    isJumping = false;
 
-    constructor(world)
-    {
+    // state attacking
+    isAttacking = false;
+
+    // points to the character state
+    state = HiroStates.MOVING;
 
 
-        this.world = world;
-        addEventListener('keyup', ({ key }) =>
-        {
+    // points to the current sprite (false sets state to moving)
+    currentSprite = false;
 
-            console.debug(key);
-
-            if (/\s+/.test(key) && !this.isJumping)
-            {
-                this.isJumping = true;
-            }
-
-            if (key === 'ArrowLeft')
-            {
-                this.direction = Direction.LEFT;
-            }
-
-            if (key === 'ArrowRight')
-            {
-                this.direction = Direction.RIGHT;
-            }
-
-        });
-
-    }
 
 
     draw()
     {
         const { ctx } = this.world;
+
+
         if (this.isJumping)
         {
             this.jump();
         }
 
-        ctx.drawImage(this.direction.method(),
+        if (this.isAttacking)
+        {
+            this.attack();
+        }
+
+        // no else as attacking state can be changed
+        if (!this.isAttacking)
+        {
+            this.move();
+        }
+
+        // checks intersections
+
+        this.intersections();
+
+
+
+        ctx.drawImage(this.currentSprite,
             this.x, this.y,
-            150, 150
+            this.width, this.height
         );
     }
+
+
+
+    move()
+    {
+        this.state = HiroStates.MOVING;
+        this.currentSprite = this.state.animation();
+    }
+
+    attack()
+    {
+
+        if (this.isAttacking)
+        {
+
+            this.state = HiroStates.ATTACKING;
+            if (false === (this.currentSprite = this.state.animation()))
+            {
+                this.isAttacking = false;
+            }
+
+        }
+
+        // no else as it can be unset
+        if (!this.isAttacking)
+        {
+            this.state = HiroStates.MOVING;
+            this.move();
+        }
+
+    }
+
 
 
     jump()
     {
 
-        if (!this.isJumping) { return; }
+        if (!this.isJumping)
+        {
+            return;
+        }
+        // jumping up
         if (this.deltaY === 0)
         {
-            this.deltaY = -15;
-        } else if (this.y <= this.minY)
+            this.deltaY = - (this.jumpStep * this.gravity);
+        }
+        // jump up => down
+        else if (this.y <= this.minY)
         {
             this.deltaY = -1 * this.deltaY;
-        } else if (this.y >= this.maxY)
+            this.y = this.minY;
+
+        }
+        // jumping down
+        else if (this.y >= this.maxY)
         {
             this.deltaY = 0;
             this.isJumping = false;
+            this.y = this.maxY;
+            return;
         }
 
         this.y += this.deltaY;
-
-
-
-
     }
 
 
+    intersections()
+    {
+
+    }
 
 
 
@@ -707,10 +903,224 @@ class Stage
     }
 }
 
+function getListenersForEvent(listeners, type)
+{
+    return listeners.filter(item => item.type === type);
+}
+
+
+class EventManager
+{
+
+    #listeners;
+    #useasync;
+
+    get length()
+    {
+        return this.#listeners.length;
+    }
+
+    constructor(useasync = true)
+    {
+        this.#listeners = [];
+        this.#useasync = useasync === true;
+    }
+
+
+    on(type, listener, once = false)
+    {
+
+        if (!isString(type))
+        {
+            throw new TypeError('Invalid event type, not a String.');
+        }
+
+        if (!isFunction(listener))
+        {
+            throw new TypeError('Invalid listener, not a function');
+        }
+
+
+
+        type.split(/\s+/).forEach(type =>
+        {
+            this.#listeners.push({
+                type, listener, once: once === true,
+            });
+        });
+
+        return this;
+    }
+
+
+    one(type, listener)
+    {
+        return this.on(type, listener, true);
+    }
+
+
+    off(type, listener)
+    {
+
+        if (!isString(type))
+        {
+            throw new TypeError('Invalid event type, not a String.');
+        }
+
+        type.split(/\s+/).forEach(type =>
+        {
+
+            this.#listeners = this.#listeners.filter(item =>
+            {
+                if (type === item.type)
+                {
+                    if (listener === item.listener || !listener)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        });
+        return this;
+    }
+
+
+    trigger(type, data = null, async = null)
+    {
+
+        let event;
+
+        async ??= this.#useasync;
+
+        if (type instanceof Event)
+        {
+            event = type;
+            event.data ??= data;
+            type = event.type;
+        }
+
+        if (!isString(type) && type instanceof Event === false)
+        {
+            throw new TypeError('Invalid event type, not a String|Event.');
+        }
+
+
+        const types = [];
+
+        type.split(/\s+/).forEach(type =>
+        {
+
+            if (types.includes(type))
+            {
+                return;
+            }
+
+            types.push(type);
+
+            for (let item of getListenersForEvent(this.#listeners, type))
+            {
+
+                if (item.type === type)
+                {
+
+                    if (async)
+                    {
+                        runAsync(item.listener, event ?? { type, data });
+
+                    } else
+                    {
+                        item.listener(event ?? { type, data });
+                    }
+
+                    if (item.once)
+                    {
+                        this.off(type, item.listener);
+                    }
+                }
+            }
+
+
+        });
+
+        return this;
+
+
+    }
+
+
+    mixin(binding)
+    {
+
+        if (binding instanceof Object)
+        {
+            ['on', 'off', 'one', 'trigger'].forEach(method =>
+            {
+                Object.defineProperty(binding, method, {
+                    enumerable: false, configurable: true,
+                    value: (...args) =>
+                    {
+                        this[method](...args);
+                        return binding;
+                    }
+                });
+            });
+
+        }
+
+        return this;
+    }
+
+
+    static mixin(binding, useasync = true)
+    {
+        return (new EventManager(useasync)).mixin(binding);
+    }
+
+    static on(type, listener, once = false)
+    {
+
+        return instance.on(type, listener, once);
+    }
+
+    static one(type, listener)
+    {
+
+        return instance.one(type, listener);
+    }
+
+    static off(type, listener)
+    {
+
+        return instance.off(type, listener);
+    }
+
+    static trigger(type, data = null, async = null)
+    {
+
+        return instance.trigger(type, data, async);
+    }
+
+}
+
+
+
+const instance = new EventManager();
+
+let init = false;
+
+
 class GameWorld
 {
 
 
+    element;
+    paused = true;
+    timeout = null;
+
+    score = 0;
+
+    objects = [];
 
     get ctx()
     {
@@ -718,92 +1128,240 @@ class GameWorld
     }
 
 
-    constructor({ element, chrono, timer } = {})
+    get width()
     {
+        return decode(this.canvas.width);
+    }
+
+
+    get height()
+    {
+        return decode(this.canvas.height);
+    }
+
+
+    get time()
+    {
+        const reader = TimeReader.of(this.chrono.elapsed);
+        return (reader.hours > 0 ? reader.hours + ':' : '') + reader.minutes + ':' + reader.seconds;
+    }
+
+
+    constructor({ element } = {})
+    {
+        this.element = element;
+        this.chrono = new Chronometer(false);
+        this.displayScore = element.querySelector('#score');
+        this.displayTime = element.querySelector('#time');
         this.canvas = element.querySelector('canvas');
 
-        this.chrono = chrono;
-        this.timer = timer;
+        EventManager.mixin(this, false);
+
+    }
+
+
+    destroy()
+    {
+        this.pause();
+        init = false;
+
+        requestAnimationFrame(() => this.clearScreen());
+
     }
 
 
     init()
     {
+        if (!init)
+        {
+            this.stage = new Stage(this);
+            this.hero = new Hiro(this);
+            this.objects.length = 0;
+            this.objects.push(this.stage, this.hero);
+            this.resume();
+        }
+
+    }
 
 
 
+    pause()
+    {
 
-        this.chrono.start();
-        this.stage = new Stage(this);
-        this.hero = new Hiro(this);
-        console.debug(this.ctx);
+        if (!this.paused)
+        {
+            this.paused = true;
+            this.chrono.pause();
+            if (this.timeout)
+            {
+                clearTimeout(this.timeout);
+                this.timeout = null;
+            }
+
+            this.trigger('paused');
+        }
+
+    }
 
 
-        requestAnimationFrame(() => this.draw());
+    resume()
+    {
+
+        if (this.paused)
+        {
+            this.paused = false;
+            if (this.chrono.stopped)
+            {
+                this.chrono.start();
+                this.trigger('started');
+            } else
+            {
+                this.chrono.resume();
+                this.trigger('resume');
+            }
+            requestAnimationFrame(() => this.draw());
+
+        }
+
+
+    }
+
+
+
+    clearScreen()
+    {
+        // clears ouput before redrawing
+        this.ctx.clearRect(0, 0, this.width, this.height);
     }
 
 
     draw()
     {
 
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        let time = new TimeReader(this.chrono.elapsed), str = '';
-
-        if (time.hours > 0)
+        if (this.paused)
         {
-            str += time.hours + ':';
+            return;
         }
 
 
-
-        str += time.minutes + ':';
-
-        str += time.seconds;
-
-        this.timer.innerHTML = 'temps : ' + str;
-
-
-        this.stage.draw();// tj en premier
-        this.hero.draw();
+        const { displayScore, displayTime } = this;
 
 
 
-        setTimeout(() =>
+
+
+        this.clearScreen();
+
+
+        // draw objects
+        this.objects.forEach(obj => obj.draw());
+
+        // this is generated after as score can change when drawing
+        displayScore.innerHTML = this.score;
+        displayTime.innerHTML = this.time;
+
+
+        this.timeout = setTimeout(() =>
         {
             requestAnimationFrame(() => this.draw());
-        }, 16);
+        }, 16); // ~60 fps
     }
 }
 
-const timer = document.querySelector('.time'), chrono = new Chronometer();
+/**
+ * SCSS Style
+ */
 
 
 
 
-// Variables de base pour le saut, la collision, le déplacement des images
+
+// init game engine
 
 const world = new GameWorld({
-    element: document.querySelector('#game'),
-    timer,
-    chrono
+    element: document.querySelector('#game')
+});
+
+// listen to keyboard events
+
+
+addEventListener('keydown', e =>
+{
+
+
+
+
+    const { key } = e;
+
+    console.debug(key);
+
+    // space key
+    if (key === ' ')
+    {
+        if (world.paused)
+        {
+            return;
+        }
+
+        e.preventDefault();
+        if (!world.hero.isJumping)
+        {
+            world.hero.isJumping = true;
+        }
+    }
+    // pause key
+    else if (key === 'p')
+    {
+        e.preventDefault();
+        if (!world.paused)
+        {
+            world.pause();
+        } else
+        {
+            world.resume();
+        }
+    }
+
+    // atttttackk !!!
+
+    else if (key === "e")
+    {
+        if (world.paused)
+        {
+            return;
+        }
+
+        e.preventDefault();
+
+        if (!world.hero.isAttacking)
+        {
+            world.hero.isAttacking = true;
+        }
+
+    }
+
+
+
 
 });
 
+
+addEventListener('click', ({ target }) =>
+{
+    if (world.paused)
+    {
+        return;
+    }
+
+    if (target.closest('#game') && !world.hero.isAttacking)
+    {
+        world.hero.isAttacking = true;
+    }
+
+
+});
+
+
+// engage full warp !!!
 world.init();
-
-
-
-
-
-
-
-// addEventListener('keyup', ({ key }) =>
-// {
-
-//     console.debug(key === ' ');
-
-
-
-// });
 //# sourceMappingURL=main.js.map

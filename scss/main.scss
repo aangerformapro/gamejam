@@ -22,59 +22,61 @@ body {
     min-height: 100vh;
 
     background-color: #333;
-}
 
-.data {
-    position: relative;
-    top: 75px;
     display: flex;
-    justify-content: space-around;
-    align-items: center;
-    width: 960px;
-    margin: 0 auto;
-    height: 10vh;
-    font-family: 'AmazDooMLeftOutline', sans-serif;
-}
-
-.score {
-    color: #00ff00be;
-    text-transform: uppercase;
-    letter-spacing: 10px;
-    font-family: 'AmazDooMLeft2', sans-serif;
-    font-size: 32px;
-    // font-family: 'AmazDooMLeftOutline', sans-serif;
-    // font-family: 'AmazDooMLeft', sans-serif;
-    // font-family: 'AmazDooMRight2', sans-serif;
-    // font-family: 'AmazDooMRightOutline', sans-serif;
-    // font-family: 'AmazDooMRight', sans-serif;
-
-    text-shadow: 6px 6px 5px #000000;
-}
-
-.time {
-    color: #ff0000;
-    text-transform: uppercase;
-    letter-spacing: 10px;
-    font-family: 'Times New Roman', serif;
-    text-shadow: 6px 6px 5px #000000;
-    font-family: 'AmazDooMLeft2', sans-serif;
-    font-size: 32px;
-    // font-family: 'AmazDooMLeftOutline', sans-serif;
-    // font-family: 'AmazDooMLeft', sans-serif;
-    // font-family: 'AmazDooMRight2', sans-serif;
-    // font-family: 'AmazDooMRightOutline', sans-serif;
-    // font-family: 'AmazDooMRight', sans-serif;
-}
-
-#game {
-    min-height: 100vh;
-    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
-
+#game {
+    position: relative;
+}
 #game-world {
+    position: relative;
+    z-index: 1;
     margin: 0 auto;
-    // outline: 5px solid red;
-    background: #fff;
+
+    background: #000;
+}
+
+.data {
+    user-select: none;
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'AmazDooMLeftOutline', sans-serif;
+    padding: 8px;
+
+    .time {
+        color: #ff0000;
+        text-transform: uppercase;
+        letter-spacing: 10px;
+        font-family: 'Times New Roman', serif;
+        text-shadow: 6px 6px 5px #000000;
+        font-family: 'AmazDooMLeft2', sans-serif;
+        font-size: 32px;
+        // font-family: 'AmazDooMLeftOutline', sans-serif;
+        // font-family: 'AmazDooMLeft', sans-serif;
+        // font-family: 'AmazDooMRight2', sans-serif;
+        // font-family: 'AmazDooMRightOutline', sans-serif;
+        // font-family: 'AmazDooMRight', sans-serif;
+    }
+    .score {
+        color: #00ff00be;
+        text-transform: uppercase;
+        letter-spacing: 10px;
+        font-family: 'AmazDooMLeft2', sans-serif;
+        font-size: 32px;
+        // font-family: 'AmazDooMLeftOutline', sans-serif;
+        // font-family: 'AmazDooMLeft', sans-serif;
+        // font-family: 'AmazDooMRight2', sans-serif;
+        // font-family: 'AmazDooMRightOutline', sans-serif;
+        // font-family: 'AmazDooMRight', sans-serif;
+
+        text-shadow: 6px 6px 5px #000000;
+    }
 }
