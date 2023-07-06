@@ -121,93 +121,35 @@ body {
 
 .death-container {
     position: relative;
-    outline: 3px solid red;
-    opacity: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
+    left: 50%;
+    right: 50%;
+    transform: translate(-50%, -50%);
     width: 960px;
     height: 540px;
-
     .death-image {
-        width: 480px;
+        position: absolute;
+        top: 25px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 320px;
         height: 180px;
-        background: url(./ressources/DeadText.png);
+        background: url();
     }
 
-    .data {
-        margin-top: 50px;
-        display: flex;
-        justify-content: space-around;
-        letter-spacing: 5px;
-
-        .score {
-            font-size: 32px;
-            padding-right: 15px;
-            font-family: 'AmazDooMLeft2', sans-serif;
-            margin-right: 20px;
-        }
-
-        // .time {
-        //     font-size: 32px;
-        //     padding-right: 15px;
-        //     font-family: 'AmazDooMLeft2', sans-serif;
-        //     margin-right: 20px;
-        // }
+    .text-death {
+        position: absolute;
+        width: 320px;
+        height: 180px;
+        top: 180px;
+        left: 50%;
+        transform: translateX(-50%);
     }
 
     .retry {
-        font-size: 32px;
-        cursor: pointer;
-        margin-top: 50px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 7px;
-        background-color: black;
-        color: white;
-        width: 250px;
+        position: absolute;
+        width: 110px;
         height: 100px;
         top: 250px;
-        text-transform: uppercase;
-        letter-spacing: 15px;
-        overflow: hidden;
-        font-family: 'AmazDooMLeft2', sans-serif;
-    }
-}
-
-.death-container::after {
-    content: '';
-    width: 3px;
-    height: 3px;
-    background-color: white;
-    animation: float 10s infinite;
-    position: absolute;
-    left: 0;
-    top: 0;
-    border-radius: 50%;
-}
-
-@keyframes float {
-    25% {
-        left: 25%;
-        top: 33%;
-    }
-
-    50% {
-        left: 53%;
-        top: 50%;
-    }
-
-    75% {
-        left: 66%;
-        top: 86%;
-    }
-
-    100% {
-        left: 0;
-        top: 0;
     }
 }
 
@@ -217,101 +159,42 @@ body {
     background: darkblue;
     display: flex;
     z-index: 3;
+    position: relative;
     .start-menu-leaderboard {
-        width: 860px;
-        height: 320px;
-    }
-    .start-menu-logo {
-        width: 200px;
-        height: 540px;
+        width: 33%;
+        height: 80%;
     }
     .start-menu-box-right {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
-        width: 860px;
-        height: 540px;
-
+        .start-menu-logo {
+        }
         .start-menu-regles {
-            font-family: 'AmazDooMLeft2', sans-serif;
-            font-size: 1.6rem;
         }
         .start-menu-touches {
-            display: flex;
             .start-menu-touche-e {
             }
             .start-menu-touche-click {
             }
             .start-menu-touche-space {
             }
-            .start-menu-touche-pause {
-            }
         }
         .start-menu-btn {
-            width: 200px;
-            height: 100px;
         }
     }
 }
-// victoire
-.victory {
-    width: 960px;
-    height: 540px;
-    background: pink;
-    display: flex;
-}
 
-// pause//
-@mixin base {
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    width: 100%;
-    height: 100%;
-}
 .pause {
-    font-family: 'AmazDooMLeft2', sans-serif;
     width: 960px;
     height: 540px;
     background: darkred;
+    position: absolute;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 10px;
-    font-size: 4rem;
-    p {
-        margin-top: 50px;
+    .pcontainer {
+        width: 100%;
+        height: 100%;
+        btn {
+            margin: 5px;
+        }
     }
-    .ctn-btn {
-        @include base();
-        justify-content: space-around;
-    }
-    button {
-        font-family: 'AmazDooMLeft2', sans-serif;
-        padding: 5px;
-        font-size: 3rem;
-        border-radius: 10px;
-    }
-}
-
-// level up /////
-@mixin size {
-    width: 100%;
-    height: 100%;
-}
-@mixin center {
-    justify-content: center;
-    align-items: center;
-}
-@mixin flex {
-    display: flex;
-    flex-direction: column;
-}
-.level {
-    width: 960px;
-    height: 540px;
-    background: purple;
-    margin: 25px;
 }

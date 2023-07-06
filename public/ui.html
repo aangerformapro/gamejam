@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Metdata/SEO -->
+    <meta name="robots" content="index,follow">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="keywords" content="">
+    <title>GutsOut !!!</title>
+
+    <!-- Icons -->
+
+    <link rel="shortcut icon" href="./assets/pictures/favicon.png" sizes="64x64" type="image/png">
+    <link rel="apple-touch-icon" href="./assets/pictures/favicon.png" sizes="64x64" type="image/png">
+
+    <!-- Fonts -->
+    <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> -->
+
+    <link href="https://fonts.cdnfonts.com/css/amazdoom" rel="stylesheet">
+
+    <!-- Styles -->
+
+    <link rel="stylesheet" href="./assets/main.css">
+
+    <!-- Scripts -->
+
+    <!-- <script src="./assets/main.js" type="module" defer></script> -->
+
+</head>
+
+<body>
+
+
+
+    <div id="game">
+        <canvas width="960" height="540" id="game-world"></canvas>
+        <div class="data">
+            <div id="lives" data-lives="5"></div>
+            <div class="score">score: <span id="score"></span></div>
+            <div class="time">temps: <span id="time"></span></div>
+        </div>
+    </div>
+
+
+
+    <!-- START MENU -->
+    <div class="start-menu">
+        <div class="start-menu-leaderboard">leader</div>
+        <img src="/assets/pictures/LogoGutsOutColor.png" class="start-menu-logo"></img>
+        <div class="start-menu-box-right">
+            <div class="start-menu-regles">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellat,
+                voluptatibus animi? Laudantium magni officia distinctio reiciendis recusandae? Nostrum accusamus, saepe
+                reprehenderit rerum suscipit pariatur quo quidem iste et nulla vitae.</div>
+            <div class="start-menu-touches">
+                <div class="start-menu-touche-e">e</div>
+                <div class="start-menu-touche-click">click</div>
+                <div class="start-menu-touche-space">space</div>
+                <div class="start-menu-touche-pause">pause</div>
+            </div>
+            <img src="assets/pictures/ui/menu/StartText.png" class="start-menu-btn"></img>
+        </div>
+    </div>
+
+
+
+    <!-- Section Loris -->
+    <div class="victory">
+        <div class="victory-image">
+            <img src="#" alt="victory">
+            <h1>Victoire !</h1>
+            <p>Félicitations, vous avez gagné !</p>
+        </div>
+    </div>
+    <!-- Section Loris -->
+
+    <!-- PARTIE KEVIN MORT -->
+
+    <div class=" death-container">
+        <div class="death-image"></div>
+        <div class="data">
+            <div class="score">You scored <span class="score">0</span>points</div>
+            <div class="time">You survived <span class="time">0</span>seconds</div>
+        </div>
+        <div class="retry">reessayer</div>
+
+    </div>
+
+    <!-- pause -->
+    <div class="pause">
+        <p>PAUSE</p>
+        <div class="ctn-btn">
+            <button>Continue</button>
+            <button>Home</button>
+        </div>
+
+    </div>
+
+    <!-- level up -->
+    <div class="level">
+
+    </div>
+
+</body>
+
+</html>
