@@ -2,6 +2,8 @@
 
 Ce jeu est disponible à https://guts-out.netlify.app/
 
+[Vidéo de présentation](./GutsOutPromo.mp4)
+
 # GutsOut
 GutsOut est un jeu qui vous place dans la peau d'un chevalier en quête de vengeance. Survivez à travers des cartes en pourfendant des ennemis, récupérant des items, mais surtout : survivez, si vous le pouvez.
 Il s'agit d'un défi inter-promotions de chez Onlineformapro, pour lequel il a s'agit de créer un jeu vidéo 2d en 48h.
