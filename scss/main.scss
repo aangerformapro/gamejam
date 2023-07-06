@@ -17,8 +17,9 @@ html {
 }
 
 body {
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', 'Liberation Sans', Arial,
-        cursive, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    // font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', 'Liberation Sans', Arial,
+    //     cursive, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    font-family: 'AmazDooMLeft2', sans-serif;
     min-height: 100vh;
 
     background-color: #333;
@@ -43,6 +44,13 @@ body {
     z-index: 1;
     margin: 0 auto;
     background: #000;
+}
+
+#audioplayers {
+    position: fixed;
+    z-index: -1000;
+    right: 500vw;
+    top: -500vh;
 }
 
 .data {
@@ -118,10 +126,10 @@ body {
         }
     }
 }
-
+// mort///////
 .death-container {
     position: relative;
-    outline: 3px solid red;
+    // outline: 3px solid red;
     opacity: 1;
     display: flex;
     flex-direction: column;
@@ -131,9 +139,10 @@ body {
     height: 540px;
 
     .death-image {
+        margin-top: 200px;
         width: 480px;
         height: 180px;
-        background: url(./ressources/DeadText.png);
+        background: url(./assets/pictures/ui/menu/DeadText.png);
     }
 
     .data {
@@ -144,17 +153,20 @@ body {
 
         .score {
             font-size: 32px;
-            padding-right: 15px;
+            // padding-right: 15px;
             font-family: 'AmazDooMLeft2', sans-serif;
             margin-right: 20px;
+
+            .score-span {
+                padding: 0 20px;
+            }
         }
 
-        // .time {
-        //     font-size: 32px;
-        //     padding-right: 15px;
-        //     font-family: 'AmazDooMLeft2', sans-serif;
-        //     margin-right: 20px;
-        // }
+        .time {
+            .time-span {
+                padding-right: 25px;
+            }
+        }
     }
 
     .retry {
@@ -177,80 +189,82 @@ body {
     }
 }
 
-.death-container::after {
-    content: '';
-    width: 3px;
-    height: 3px;
-    background-color: white;
-    animation: float 10s infinite;
-    position: absolute;
-    left: 0;
-    top: 0;
-    border-radius: 50%;
-}
-
-@keyframes float {
-    25% {
-        left: 25%;
-        top: 33%;
-    }
-
-    50% {
-        left: 53%;
-        top: 50%;
-    }
-
-    75% {
-        left: 66%;
-        top: 86%;
-    }
-
-    100% {
-        left: 0;
-        top: 0;
-    }
-}
-
 .start-menu {
     width: 960px;
     height: 540px;
     background: darkblue;
-    display: flex;
     z-index: 3;
-    .start-menu-leaderboard {
-        width: 860px;
-        height: 320px;
-    }
-    .start-menu-logo {
-        width: 200px;
-        height: 540px;
-    }
-    .start-menu-box-right {
+    background-image: url(./pictures/worlds/stage1.png);
+    .start-menu-background {
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
-        width: 860px;
-        height: 540px;
-
-        .start-menu-regles {
-            font-family: 'AmazDooMLeft2', sans-serif;
-            font-size: 1.6rem;
+        backdrop-filter: blur(20px);
+        color: white;
+        .start-menu-leaderboard {
+            width: 260px;
+            height: 320px;
+            margin-left: 80px;
+            margin-top: 50px;
+            .start-menu-highscore-title {
+                font-size: 3rem;
+            }
+            .start-menu-highscore-score {
+                font-size: 3rem;
+            }
         }
-        .start-menu-touches {
+        .start-menu-logo {
+            width: 240px;
+            height: 450px;
+        }
+        .start-menu-box-right {
             display: flex;
-            .start-menu-touche-e {
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            width: 340px;
+            height: 540px;
+
+            .start-menu-regles {
+                font-family: 'AmazDooMLeft2', sans-serif;
+                font-size: 1.6rem;
+                color: white;
+                text-shadow: 1px black;
             }
-            .start-menu-touche-click {
+            .start-menu-touches {
+                display: flex;
+                gap: 25px;
+                font-size: 1.6rem;
+                img {
+                    width: 75px;
+                    height: 75px;
+                }
+                .start-menu-touche-e {
+                    font-size: 1.6rem;
+                    text-align: center;
+                }
+                .start-menu-touche-click {
+                    font-size: 1.6rem;
+                    text-align: center;
+                }
+                .start-menu-touche-space {
+                    font-size: 1.6rem;
+                    text-align: center;
+                }
+                .start-menu-touche-pause {
+                    font-size: 1.6rem;
+                    text-align: center;
+                }
             }
-            .start-menu-touche-space {
+            .start-menu-btn {
+                background-image: url(./pictures/ui/menu/StartText.png);
+                background-position: center;
+                background-size: contain;
+                background-repeat: no-repeat;
+                width: 200px;
+                height: 100px;
             }
-            .start-menu-touche-pause {
+            .start-menu-btn:hover {
+                background-image: url(./pictures/ui/menu/StartTextSelected.png);
             }
-        }
-        .start-menu-btn {
-            width: 200px;
-            height: 100px;
         }
     }
 }
@@ -260,6 +274,8 @@ body {
     height: 540px;
     background: pink;
     display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 // pause//
@@ -270,11 +286,14 @@ body {
     width: 100%;
     height: 100%;
 }
+.fond {
+    filter: blur(20px);
+}
 .pause {
     font-family: 'AmazDooMLeft2', sans-serif;
     width: 960px;
     height: 540px;
-    background: darkred;
+    background-image: url(./pictures/worlds/stage1.png);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -309,9 +328,31 @@ body {
     display: flex;
     flex-direction: column;
 }
+
 .level {
     width: 960px;
     height: 540px;
     background: purple;
     margin: 25px;
+    .levelup {
+        @include size();
+        background: #fff;
+        opacity: 0;
+        animation: animlevel 4s forwards 2s;
+        @include flex();
+        @include center();
+        font-size: 4rem;
+    }
+}
+
+@keyframes animlevel {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
 }

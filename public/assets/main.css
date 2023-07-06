@@ -14,7 +14,7 @@ html {
   scroll-behavior: smooth;
 }
 body {
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, cursive, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: "AmazDooMLeft2", sans-serif;
   min-height: 100vh;
   background-color: #333;
   display: flex;
@@ -30,6 +30,12 @@ body {
   z-index: 1;
   margin: 0 auto;
   background: #000;
+}
+#audioplayers {
+  position: fixed;
+  z-index: -1000;
+  right: 500vw;
+  top: -500vh;
 }
 .data {
   -webkit-user-select: none;
@@ -88,7 +94,6 @@ body {
 }
 .death-container {
   position: relative;
-  outline: 3px solid red;
   opacity: 1;
   display: flex;
   flex-direction: column;
@@ -98,9 +103,10 @@ body {
   height: 540px;
 }
 .death-container .death-image {
+  margin-top: 200px;
   width: 480px;
   height: 180px;
-  background: url(./ressources/DeadText.png);
+  background: url(./assets/pictures/ui/menu/DeadText.png);
 }
 .death-container .data {
   margin-top: 50px;
@@ -110,9 +116,14 @@ body {
 }
 .death-container .data .score {
   font-size: 32px;
-  padding-right: 15px;
   font-family: "AmazDooMLeft2", sans-serif;
   margin-right: 20px;
+}
+.death-container .data .score .score-span {
+  padding: 0 20px;
+}
+.death-container .data .time .time-span {
+  padding-right: 25px;
 }
 .death-container .retry {
   font-size: 32px;
@@ -132,80 +143,101 @@ body {
   overflow: hidden;
   font-family: "AmazDooMLeft2", sans-serif;
 }
-.death-container::after {
-  content: "";
-  width: 3px;
-  height: 3px;
-  background-color: white;
-  animation: float 10s infinite;
-  position: absolute;
-  left: 0;
-  top: 0;
-  border-radius: 50%;
-}
-@keyframes float {
-  25% {
-    left: 25%;
-    top: 33%;
-  }
-  50% {
-    left: 53%;
-    top: 50%;
-  }
-  75% {
-    left: 66%;
-    top: 86%;
-  }
-  100% {
-    left: 0;
-    top: 0;
-  }
-}
 .start-menu {
   width: 960px;
   height: 540px;
   background: darkblue;
-  display: flex;
   z-index: 3;
+  background-image: url(./pictures/worlds/stage1.png);
 }
-.start-menu .start-menu-leaderboard {
-  width: 860px;
+.start-menu .start-menu-background {
+  display: flex;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  color: white;
+}
+.start-menu .start-menu-background .start-menu-leaderboard {
+  width: 260px;
   height: 320px;
+  margin-left: 80px;
+  margin-top: 50px;
 }
-.start-menu .start-menu-logo {
-  width: 200px;
-  height: 540px;
+.start-menu .start-menu-background .start-menu-leaderboard .start-menu-highscore-title {
+  font-size: 3rem;
 }
-.start-menu .start-menu-box-right {
+.start-menu .start-menu-background .start-menu-leaderboard .start-menu-highscore-score {
+  font-size: 3rem;
+}
+.start-menu .start-menu-background .start-menu-logo {
+  width: 240px;
+  height: 450px;
+}
+.start-menu .start-menu-background .start-menu-box-right {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  width: 860px;
+  justify-content: space-around;
+  width: 340px;
   height: 540px;
 }
-.start-menu .start-menu-box-right .start-menu-regles {
+.start-menu .start-menu-background .start-menu-box-right .start-menu-regles {
   font-family: "AmazDooMLeft2", sans-serif;
   font-size: 1.6rem;
+  color: white;
+  text-shadow: 1px black;
 }
-.start-menu .start-menu-box-right .start-menu-touches {
+.start-menu .start-menu-background .start-menu-box-right .start-menu-touches {
   display: flex;
+  gap: 25px;
+  font-size: 1.6rem;
 }
-.start-menu .start-menu-box-right .start-menu-btn {
+.start-menu .start-menu-background .start-menu-box-right .start-menu-touches img {
+  width: 75px;
+  height: 75px;
+}
+.start-menu .start-menu-background .start-menu-box-right .start-menu-touches .start-menu-touche-e {
+  font-size: 1.6rem;
+  text-align: center;
+}
+.start-menu .start-menu-background .start-menu-box-right .start-menu-touches .start-menu-touche-click {
+  font-size: 1.6rem;
+  text-align: center;
+}
+.start-menu .start-menu-background .start-menu-box-right .start-menu-touches .start-menu-touche-space {
+  font-size: 1.6rem;
+  text-align: center;
+}
+.start-menu .start-menu-background .start-menu-box-right .start-menu-touches .start-menu-touche-pause {
+  font-size: 1.6rem;
+  text-align: center;
+}
+.start-menu .start-menu-background .start-menu-box-right .start-menu-btn {
+  background-image: url(./pictures/ui/menu/StartText.png);
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
   width: 200px;
   height: 100px;
+}
+.start-menu .start-menu-background .start-menu-box-right .start-menu-btn:hover {
+  background-image: url(./pictures/ui/menu/StartTextSelected.png);
 }
 .victory {
   width: 960px;
   height: 540px;
   background: pink;
   display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fond {
+  filter: blur(20px);
 }
 .pause {
   font-family: "AmazDooMLeft2", sans-serif;
   width: 960px;
   height: 540px;
-  background: darkred;
+  background-image: url(./pictures/worlds/stage1.png);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -235,5 +267,28 @@ body {
   height: 540px;
   background: purple;
   margin: 25px;
+}
+.level .levelup {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  opacity: 0;
+  animation: animlevel 4s forwards 2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 4rem;
+}
+@keyframes animlevel {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 /*# sourceMappingURL=main.css.map */

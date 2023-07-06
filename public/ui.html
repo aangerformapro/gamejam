@@ -50,20 +50,45 @@
 
     <!-- START MENU -->
     <div class="start-menu">
-        <div class="start-menu-leaderboard">leader</div>
-        <img src="/assets/pictures/LogoGutsOutColor.png" class="start-menu-logo"></img>
-        <div class="start-menu-box-right">
-            <div class="start-menu-regles">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellat,
-                voluptatibus animi? Laudantium magni officia distinctio reiciendis recusandae? Nostrum accusamus, saepe
-                reprehenderit rerum suscipit pariatur quo quidem iste et nulla vitae.</div>
-            <div class="start-menu-touches">
-                <div class="start-menu-touche-e">e</div>
-                <div class="start-menu-touche-click">click</div>
-                <div class="start-menu-touche-space">space</div>
-                <div class="start-menu-touche-pause">pause</div>
+        <div class="start-menu-background">
+            <div class="start-menu-leaderboard">
+                <div class="start-menu-highscore-title">HighScores</div>
+                <div class="start-menu-highscore-score">320 201</div>
+                <div class="start-menu-highscore-score">9 999</div>
             </div>
-            <img src="assets/pictures/ui/menu/StartText.png" class="start-menu-btn"></img>
+            <img src="/assets/pictures/LogoGutsOutColor.png" class="start-menu-logo"></img>
+            <div class="start-menu-box-right">
+                <div class="start-menu-regles">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellat,
+                    voluptatibus animi? Laudantium magni officia distinctio reiciendis recusandae? Nostrum accusamus,
+                    saepe
+                    reprehenderit rerum suscipit pariatur quo quidem iste et nulla vitae.</div>
+                <div class="start-menu-touches">
+                    <div class="start-menu-touche-e">
+                        <div class="start-menu-touche-e-text">ATTACK</div>
+                        <img src="assets/pictures/ui/menu/iconeAttaque.png" alt="attack"
+                            class="start-menu-touche-e-img"></img>
+                        <div class="start-menu-touche-e-text">E <br>or</br></div>
+                        <div class="start-menu-touche-click">CLICK</div>
+                    </div>
+
+                    <div class="start-menu-touche-space">
+                        <div class="start-menu-touche-space-text">JUMP</div>
+                        <img src="assets/pictures/ui/menu/iconeSaut.png" alt="jump" class="start-menu-touche-space-img">
+                        <div class="start-menu-touche-space-text">SPACE</div>
+                    </div>
+                    <div class="start-menu-touche-pause">
+                        <div class="start-menu-touche-pause-text">PAUSE</div>
+                        <img src="assets/pictures/ui/menu/iconePause.png" alt="pause"
+                            class="start-menu-touche-pause-img">
+                        <div class="start-menu-touche-pause-text">P</div>
+                    </div>
+
+                </div>
+                <div class="start-menu-btn"></div>
+            </div>
+
         </div>
+
     </div>
 
 
@@ -71,9 +96,7 @@
     <!-- Section Loris -->
     <div class="victory">
         <div class="victory-image">
-            <img src="#" alt="victory">
-            <h1>Victoire !</h1>
-            <p>Félicitations, vous avez gagné !</p>
+            <img src="assets/pictures/ui/menu/WinText.png" alt="victory">
         </div>
     </div>
     <!-- Section Loris -->
@@ -81,28 +104,30 @@
     <!-- PARTIE KEVIN MORT -->
 
     <div class=" death-container">
-        <div class="death-image"></div>
+        <img class="death-image" src="./assets/pictures/ui/menu/DeadText.png"></img>
         <div class="data">
-            <div class="score">You scored <span class="score">0</span>points</div>
-            <div class="time">You survived <span class="time">0</span>seconds</div>
+            <div class="score">You scored <span class="score-span">0</span>points</div>
+            <div class="time">You survived <span class="time-span">0</span>seconds</div>
         </div>
-        <div class="retry">reessayer</div>
+        <img src="./assets/pictures/ui/menu/RST_NotSelected.png" alt="Bouton reessayer" class="retry">
 
     </div>
 
     <!-- pause -->
     <div class="pause">
-        <p>PAUSE</p>
+        div.ctn
+        <p><img src="./assets/pictures/ui/menu/PauseText.png" alt=""></p>
         <div class="ctn-btn">
             <button>Continue</button>
-            <button>Home</button>
         </div>
 
     </div>
 
     <!-- level up -->
     <div class="level">
-
+        <div class="levelup">
+            <img src="./assets/pictures/ui/menu/StageClearedText.png" alt="">
+        </div>
     </div>
 
 </body>
