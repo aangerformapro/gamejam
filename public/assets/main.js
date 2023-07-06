@@ -497,10 +497,13 @@ class Box
 
     constructor({ x, y, width, height })
     {
-        this.min.x = x;
-        this.max.x = x + width;
-        this.min.y = y;
-        this.max.y = y + height;
+        let offsetW = Math.floor(width / 4), offsetH = Math.floor(height / 4);
+
+
+        this.min.x = x + offsetW;
+        this.max.x = x + width - offsetW;
+        this.min.y = y + offsetH;
+        this.max.y = y + height - offsetH;
     }
 
     /**
@@ -566,7 +569,11 @@ class GameObject
 
     isEnemy = false;
     // gain score when intersecting non ennemy object || intersecting ennemy + attacking
-    scoreGain = 0;
+    get scoreGain()
+    {
+        return 0;
+    }
+
 
 
     get name()
@@ -579,10 +586,10 @@ class GameObject
         return this.world.ctx;
     }
 
-    #box;
+
     get box()
     {
-        return this.#box ??= Box.of(this);
+        return Box.of(this);
 
     }
 
@@ -619,6 +626,12 @@ class GameObject
     }
 
 
+    destroy()
+    {
+
+        this.destroyed = true;
+
+    }
 
 
 
@@ -628,7 +641,8 @@ class GameObject
 
 const PICTURES = './assets/pictures',
     WORLDS = PICTURES + '/worlds',
-    HERO = PICTURES + '/hiro';
+    HERO = PICTURES + '/hiro',
+    ENEMY = PICTURES + '/enemy';
 
 let loading = 0;
 
@@ -710,7 +724,7 @@ function animate(sprites, loop = true)
 
 
 
-const STATES = new Map([
+const STATES$1 = new Map([
     [
         'moving', [
             // sprites
@@ -742,14 +756,14 @@ class HiroStates extends BackedEnum
 
     get sprites()
     {
-        return STATES.get(this.value)[0];
+        return STATES$1.get(this.value)[0];
     }
 
     #animation;
 
-    get animation()
+    getAnimation()
     {
-        return this.#animation ??= animate(...STATES.get(this.value));
+        return this.#animation ??= animate(...STATES$1.get(this.value));
     }
 }
 
@@ -761,6 +775,8 @@ class Hiro extends GameObject
 
 
     hp = 6; //à définir 
+
+    killCount = 0;
 
     // box
     x = 100;
@@ -790,11 +806,14 @@ class Hiro extends GameObject
     // points to the current sprite (false sets state to moving)
     currentSprite = false;
 
+    // hero can intercepts object one time
+    intercepting = [];
+
 
 
     draw()
     {
-        const { ctx } = this.world;
+        const { ctx } = this;
 
 
         if (this.isJumping)
@@ -830,7 +849,7 @@ class Hiro extends GameObject
     move()
     {
         this.state = HiroStates.MOVING;
-        this.currentSprite = this.state.animation();
+        this.currentSprite = this.state.getAnimation(this)();
     }
 
     attack()
@@ -840,7 +859,7 @@ class Hiro extends GameObject
         {
 
             this.state = HiroStates.ATTACKING;
-            if (false === (this.currentSprite = this.state.animation()))
+            if (false === (this.currentSprite = this.state.getAnimation(this)()))
             {
                 this.isAttacking = false;
             }
@@ -890,35 +909,61 @@ class Hiro extends GameObject
     }
 
 
+
     intersections()
     {
 
-        for (let item of this.world.objects)
+
+        // clears unique intercepts
+        this.intercepting = this.intercepting.filter(item =>
         {
-            if (item === this)
+
+
+            if (item.destroyed || !item.isIntersecting(this))
             {
-                continue;
+                return false;
             }
 
+            return true;
+        });
 
-            if (item.isIntersecting(this))
+
+        // copying as it can be destroyed
+        for (let item of [...this.world.objects])
+        {
+
+
+            if (item.isIntersecting(this) && !this.intercepting.includes(item))
             {
-
-
-
 
                 if (item.scoreGain > 0)
                 {
+
+                    this.intercepting.push(item);
+
                     if (!item.isEnemy || this.isAttacking)
                     {
                         this.world.score += item.scoreGain;
+
+                        this.world.destroyObject(item);
+
+                        // generate a new enemy
+                        if (item.isEnemy)
+                        {
+                            this.killCount++;
+                            this.world.stage.generateEnemy();
+                        }
+
+
                         // do something to the item (animation and destroy)
                         this.world.trigger('scoregain', { item });
+
 
                     }
                     // lose hp
                     else if (item.isEnemy)
                     {
+
                         this.hp--;
                         this.world.trigger('hploss', { item });
                         if (this.hp <= 0)
@@ -929,7 +974,6 @@ class Hiro extends GameObject
                         }
 
                     }
-                    console.debug('intersecting', item.name);
                 }
 
 
@@ -947,7 +991,166 @@ class Hiro extends GameObject
 
 }
 
+const STATES = new Map([
+    [
+        'moving', [
+            // sprites
+            [...Array(9)].map((_, n) => ENEMY + '/demon/moving/' + (n + 1) + '.png'),
+
+            //can loop
+            true
+        ]
+
+    ]
+
+]);
+
+
+const animation = new Map();
+
+
+class DemonState extends BackedEnum
+{
+    static MOVING = new DemonState('moving');
+
+
+    get sprites()
+    {
+        return STATES.get(this.value)[0];
+    }
+
+
+
+    getAnimation(instance)
+    {
+
+        if (!animation.has(instance))
+        {
+            animation.set(instance, animate(...STATES.get(this.value)));
+        }
+        return animation.get(instance);
+    }
+}
+
+
+
+class Demon extends GameObject
+{
+
+
+    isEnemy = true;
+    isDead = false;
+
+    #points;
+    // gain score when intersecting non ennemy object || intersecting ennemy + attacking
+    get scoreGain()
+    {
+        return this.#points ??= Math.ceil(Math.random() * 500);
+    }
+
+    // GameObject implementation
+
+
+    get width()
+    {
+        return this.world.hero.width;
+    }
+
+    get height()
+    {
+        return this.world.hero.height;
+    }
+
+
+    get y()
+    {
+        return this.world.hero.maxY;
+    }
+
+    set y(value)
+    {
+        //noop
+    }
+
+    // end of the map
+    #x;
+    get x()
+    {
+        return this.#x ??= this.world.width + Math.floor(Math.random() * this.world.width * Math.ceil(Math.random() * 3));
+    }
+
+    set x(value)
+    {
+        this.#x = value;
+    }
+
+    // demon state
+    state = DemonState.MOVING;
+
+
+    // points to the current sprite (false sets state to moving)
+    currentSprite = false;
+
+
+
+
+    draw()
+    {
+
+        const { ctx } = this;
+
+        this.move();
+
+
+        // don't draw it out of the canvas
+        if (this.x > this.world.width - this.width)
+        {
+            return;
+        }
+
+
+
+        ctx.drawImage(this.currentSprite,
+            this.x, this.y,
+            this.width, this.height
+        );
+
+    }
+
+
+
+    move()
+    {
+
+        this.state = DemonState.MOVING;
+        this.currentSprite = this.state.getAnimation(this)();
+
+        // move with the stage
+        this.x -= this.world.stage.speed;
+
+
+        if (this.x <= 0)
+        {
+            this.#x = null;
+        }
+
+    }
+
+
+    destroy()
+    {
+
+        super.destroy();
+
+        this.isDead = true;
+    }
+
+
+}
+
 const STAGES = [...Array(8)].map((_, n) => WORLDS + '/stage' + (n + 1) + '.png');
+
+
 
 
 
@@ -959,8 +1162,23 @@ class Stage extends GameObject
     // STAGES[level]
     level = 0;
 
+    enemies = 0;
+    enemiesPerStageRatio = 5;
+
+    get maxEnemies()
+    {
+        return this.stage * this.enemiesPerStageRatio;
+    }
+
+    get stage()
+    {
+        return this.level + 1;
+    }
+
     // number of loops n * (deltaX === width)
     loops = 0;
+
+    loopIncreased = false;
 
 
     // max loops before clearing stage
@@ -1012,6 +1230,7 @@ class Stage extends GameObject
     draw()
     {
 
+        this.generateEnemies();
 
         const { decor, ctx } = this;
         this.deltaX += this.speed;
@@ -1019,6 +1238,7 @@ class Stage extends GameObject
         {
             this.deltaX = 0;
             this.loops++;
+            this.loopIncreased = true;
 
             console.debug(this.loops);
 
@@ -1049,6 +1269,42 @@ class Stage extends GameObject
             this.deltaX, this.height
 
         );
+
+
+
+    }
+
+
+
+    generateEnemy()
+    {
+        if (this.enemies < this.maxEnemies)
+        {
+            this.world.objects.push(new Demon(this.world));
+
+        }
+
+    }
+
+
+    generateEnemies()
+    {
+        if (this.enemies === 0 || this.loopIncreased)
+        {
+            if (this.loopIncreased)
+            {
+                this.loopIncreased = false;
+            }
+
+            if (this.enemies < this.maxEnemies)
+            {
+
+                this.generateEnemy();
+                this.enemies++;
+            }
+        }
+
+
 
 
 
@@ -1429,8 +1685,8 @@ class GameWorld
 
     score = 0;
 
-    // ~60 secs
-    loopsToClearStage = 20;
+    // ~30 secs
+    loopsToClearStage = 10;
 
     objects = [];
 
@@ -1478,8 +1734,29 @@ class GameWorld
         this.pause();
         init = false;
 
+        this.objects.forEach(obj => obj.destroy());
+
         requestAnimationFrame(() => this.clearScreen());
 
+    }
+
+
+    /**
+     * Destroy a game object and prevent it from being drawn
+     */
+    destroyObject(gameobject)
+    {
+        if (gameobject instanceof GameObject)
+        {
+
+            let index = this.objects.indexOf(gameobject);
+            if (index > -1)
+            {
+                gameobject.destroy();
+                this.objects.splice(index, 1);
+            }
+
+        }
     }
 
 
@@ -1490,7 +1767,6 @@ class GameWorld
             this.stage = new Stage(this);
             this.hero = new Hiro(this);
             this.objects.length = 0;
-            this.objects.push(this.stage, this.hero);
             this.resume();
         }
 
@@ -1566,8 +1842,15 @@ class GameWorld
         this.clearScreen();
 
 
-        // draw objects
+
+        // draw first
+        this.stage.draw();
+
+        // draw other objects (enemies)
         this.objects.forEach(obj => obj.draw());
+
+        // draw last
+        this.hero.draw();
 
         // this is generated after as score can change when drawing
         displayScore.innerHTML = this.score;
