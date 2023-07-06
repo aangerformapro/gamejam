@@ -2,7 +2,7 @@
 
 Ce jeu est disponible à https://guts-out.netlify.app/
 
-[Vidéo de présentation](https://guts-out.netlify.app/assets/GutsOutPromo.mp4)
+Vidéo de présentation: GutsOutPromo.mp4
 
 # GutsOut
 GutsOut est un jeu qui vous place dans la peau d'un chevalier en quête de vengeance. Survivez à travers des cartes en pourfendant des ennemis, récupérant des items, mais surtout : survivez, si vous le pouvez.
