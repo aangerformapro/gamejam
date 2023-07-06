@@ -10,6 +10,10 @@
     box-sizing: border-box;
 }
 
+[hidden] {
+    display: none !important;
+}
+
 html {
     font-size: 16px;
     line-height: 1.2;
@@ -31,13 +35,6 @@ body {
 }
 #game {
     position: relative;
-
-    // @media (min-width: 1280px) {
-    //     scale: 1.33;
-    // }
-    // @media (min-width: 1920px) {
-    //     scale: 1.8;
-    // }
 }
 #game-world {
     position: relative;
@@ -128,8 +125,11 @@ body {
 }
 // mort///////
 .death-container {
-    position: relative;
-    // outline: 3px solid red;
+    position: absolute;
+    z-index: 4;
+    inset: 0;
+    backdrop-filter: blur(20px);
+
     opacity: 1;
     display: flex;
     flex-direction: column;
@@ -190,30 +190,46 @@ body {
 }
 
 .start-menu {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 960px;
     height: 540px;
     background: darkblue;
-    z-index: 3;
+    z-index: 4;
     background-image: url(./pictures/worlds/stage1.png);
     .start-menu-background {
         display: flex;
         backdrop-filter: blur(20px);
         color: white;
         .start-menu-leaderboard {
-            width: 260px;
-            height: 320px;
+            width: 300px;
+            height: 480px;
             margin-left: 80px;
             margin-top: 50px;
-            .start-menu-highscore-title {
-                font-size: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            .start-menu-title {
+                font-size: 9rem;
             }
-            .start-menu-highscore-score {
-                font-size: 3rem;
+            .start-menu-credit {
+                cursor: pointer;
+                background-image: url(./pictures/ui/menu/CreditsText.png);
+                width: 200px;
+                height: 100px;
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: contain;
+            }
+            .start-menu-credit:hover {
+                background-image: url(./pictures/ui/menu/CreditsTextSelected.png);
             }
         }
         .start-menu-logo {
-            width: 240px;
+            width: 200px;
             height: 450px;
+            margin-top: 30px;
         }
         .start-menu-box-right {
             display: flex;
@@ -225,9 +241,10 @@ body {
 
             .start-menu-regles {
                 font-family: 'AmazDooMLeft2', sans-serif;
-                font-size: 1.6rem;
+                font-size: 1.7rem;
                 color: white;
                 text-shadow: 1px black;
+                text-align: center;
             }
             .start-menu-touches {
                 display: flex;
@@ -255,12 +272,14 @@ body {
                 }
             }
             .start-menu-btn {
+                cursor: pointer;
                 background-image: url(./pictures/ui/menu/StartText.png);
                 background-position: center;
                 background-size: contain;
                 background-repeat: no-repeat;
                 width: 200px;
                 height: 100px;
+                cursor: pointer;
             }
             .start-menu-btn:hover {
                 background-image: url(./pictures/ui/menu/StartTextSelected.png);
@@ -268,11 +287,16 @@ body {
         }
     }
 }
+
 // victoire
 .victory {
     width: 960px;
     height: 540px;
-    background: pink;
+    backdrop-filter: blur(20px);
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+    z-index: 4;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -290,16 +314,24 @@ body {
     filter: blur(20px);
 }
 .pause {
+    position: absolute;
+    z-index: 3;
+    top: -10px;
+    left: -10px;
+    width: calc(100% + 16px);
+    height: calc(100% + 16px);
     font-family: 'AmazDooMLeft2', sans-serif;
     width: 960px;
     height: 540px;
-    background-image: url(./pictures/worlds/stage1.png);
+    backdrop-filter: blur(20px);
+
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     margin: 10px;
     font-size: 4rem;
+
     p {
         margin-top: 50px;
     }
@@ -328,17 +360,30 @@ body {
     display: flex;
     flex-direction: column;
 }
-
+.credits {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+}
 .level {
+    cursor: pointer;
+    position: absolute;
+    inset: 0;
+    z-index: 4;
     width: 960px;
     height: 540px;
-    background: purple;
-    margin: 25px;
+
+    backdrop-filter: blur(30px);
+
     .levelup {
         @include size();
-        background: #fff;
-        opacity: 0;
-        animation: animlevel 4s forwards 2s;
+
+        // animation: animlevel 4s forwards 2s;
         @include flex();
         @include center();
         font-size: 4rem;

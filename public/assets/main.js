@@ -1825,7 +1825,7 @@ class HiroStates extends BackedEnum
 class Hiro extends GameObject
 {
 
-
+    maxHP = 6;
     hp = 6; //à définir 
 
     killCount = 0;
@@ -1916,7 +1916,7 @@ class Hiro extends GameObject
         if (false === (this.currentSprite = this.state.getAnimation(this)()))
         {
             this.world.pause();
-            alert('You are dead !!!');
+
             this.world.trigger('dead', { item: this });
         }
 
@@ -2271,7 +2271,19 @@ class Stage extends GameObject
 
 
     // STAGES[level]
-    level = 0;
+
+    #level = 0;
+
+    get level()
+    {
+        return this.#level;
+    }
+    set level(value)
+    {
+        this.#level = value;
+        this.reset();
+        this.world.trigger('levelchange');
+    }
 
     enemies = 0;
     enemiesPerStageRatio = 5;
@@ -2342,7 +2354,12 @@ class Stage extends GameObject
     }
 
 
-
+    reset()
+    {
+        this.enemies = this.deltaX = this.loops = 0;
+        this.loopIncreased = false;
+        this.world.objects.length = 0;
+    }
 
     draw()
     {
@@ -2368,9 +2385,6 @@ class Stage extends GameObject
                 SoundEffect.LEVEL.play();
                 this.world.pause();
                 this.world.trigger('stagecleared');
-
-                alert('stage cleared !!!');
-
             }
 
 
@@ -3006,15 +3020,19 @@ class GameWorld
  * SCSS Style
  */
 
-
+const
+    menu = document.querySelector('.start-menu'),
+    death = document.querySelector('.death-container'),
+    levelup = document.querySelector('.level'),
+    victory = document.querySelector('.victory'),
+    pause = document.querySelector('.pause'),
+    credits = document.querySelector('.credits');
 
 
 
 // init game engine
 
-const world = new GameWorld({
-    element: document.querySelector('#game')
-});
+let world;
 
 // listen to keyboard events
 
@@ -3022,12 +3040,7 @@ const world = new GameWorld({
 addEventListener('keydown', e =>
 {
 
-
-
-
     const { key } = e;
-
-    console.debug(key);
 
     // space key
     if (key === ' ')
@@ -3083,6 +3096,11 @@ addEventListener('keydown', e =>
 
 addEventListener('click', ({ target }) =>
 {
+
+    if (!world)
+    {
+        return;
+    }
     if (world.paused)
     {
         return;
@@ -3098,16 +3116,127 @@ addEventListener('click', ({ target }) =>
 
 
 
-// world.on('started resume', () =>
-// {
-//     SoundTrack.pauseAll();
+
+
+menu.addEventListener('click', e =>
+{
+
+    const { target } = e;
+    if (target.closest('.start-menu-btn'))
+    {
+        world = new GameWorld({
+            element: document.querySelector('#game')
+        });
+
+
+        world.on('paused', () =>
+        {
+            pause.hidden = null;
+        }).on('resume started', () =>
+        {
+            pause.hidden = true;
+        }).on('stagecleared', () =>
+        {
+            pause.hidden = true;
+            if (world.stage.stage === 8)
+            {
+                victory.hidden = true;
+            }
+            else
+            {
+                levelup.hidden = null;
+                levelup.addEventListener("click", () =>
+                {
+                    levelup.hidden = true;
+                    world.stage.level++;
+                }, { once: true });
+
+                setTimeout(() =>
+                {
+                    levelup.click();
+                }, 3000);
+
+            }
+
+
+        }).on('dead', () =>
+        {
+
+            death.querySelector('.score-span').innerHTML = document.querySelector('#score').innerHTML;
+            death.querySelector('.time-span').innerHTML = document.querySelector('#time').innerHTML;
+            pause.hidden = true;
+            death.hidden = null;
+
+        }).on('levelchange', () =>
+        {
+
+
+            const { hero, score } = world;
+
+            while (hero.hp < hero.maxHP)
+            {
+                if (score >= 1000)
+                {
+                    world.score -= 1000;
+                    hero.hp++;
+                } else
+                {
+                    break;
+                }
+            }
+
+            world.resume();
+
+
+        });
+
+
+        menu.hidden = true;
+
+        world.init();
 
 
 
-//     console.debug(SoundTrack.cases()[world.stage.level]);
-//     SoundTrack.cases()[world.stage.level].play();
-// });
+    } else if (target.closest('.start-menu-credit'))
+    {
+        credits.hidden = null;
+    }
 
-// engage full warp !!!
-world.init();
+});
+
+
+credits.addEventListener("click", () =>
+{
+    credits.hidden = true;
+});
+
+
+pause.addEventListener("click", ({ target }) =>
+{
+    if (target.closest('button'))
+    {
+        world.resume();
+
+    }
+});
+
+death.addEventListener("click", ({ target }) =>
+{
+    if (target.closest(".retry"))
+    {
+
+        death.hidden = true;
+        world.destroy();
+        menu.hidden = null;
+
+
+    }
+});
+
+victory.addEventListener("click", () =>
+{
+    victory.hidden = true;
+    world?.destroy();
+    menu.hidden = null;
+});
 //# sourceMappingURL=main.js.map

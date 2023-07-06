@@ -8,6 +8,9 @@
   padding: 0;
   box-sizing: border-box;
 }
+[hidden] {
+  display: none !important;
+}
 html {
   font-size: 16px;
   line-height: 1.2;
@@ -93,7 +96,14 @@ body {
   background-image: url("./pictures/ui/hp/5.png");
 }
 .death-container {
-  position: relative;
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   opacity: 1;
   display: flex;
   flex-direction: column;
@@ -144,10 +154,13 @@ body {
   font-family: "AmazDooMLeft2", sans-serif;
 }
 .start-menu {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 960px;
   height: 540px;
   background: darkblue;
-  z-index: 3;
+  z-index: 4;
   background-image: url(./pictures/worlds/stage1.png);
 }
 .start-menu .start-menu-background {
@@ -157,20 +170,33 @@ body {
   color: white;
 }
 .start-menu .start-menu-background .start-menu-leaderboard {
-  width: 260px;
-  height: 320px;
+  width: 300px;
+  height: 480px;
   margin-left: 80px;
   margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
-.start-menu .start-menu-background .start-menu-leaderboard .start-menu-highscore-title {
-  font-size: 3rem;
+.start-menu .start-menu-background .start-menu-leaderboard .start-menu-title {
+  font-size: 9rem;
 }
-.start-menu .start-menu-background .start-menu-leaderboard .start-menu-highscore-score {
-  font-size: 3rem;
+.start-menu .start-menu-background .start-menu-leaderboard .start-menu-credit {
+  cursor: pointer;
+  background-image: url(./pictures/ui/menu/CreditsText.png);
+  width: 200px;
+  height: 100px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+.start-menu .start-menu-background .start-menu-leaderboard .start-menu-credit:hover {
+  background-image: url(./pictures/ui/menu/CreditsTextSelected.png);
 }
 .start-menu .start-menu-background .start-menu-logo {
-  width: 240px;
+  width: 200px;
   height: 450px;
+  margin-top: 30px;
 }
 .start-menu .start-menu-background .start-menu-box-right {
   display: flex;
@@ -182,9 +208,10 @@ body {
 }
 .start-menu .start-menu-background .start-menu-box-right .start-menu-regles {
   font-family: "AmazDooMLeft2", sans-serif;
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   color: white;
   text-shadow: 1px black;
+  text-align: center;
 }
 .start-menu .start-menu-background .start-menu-box-right .start-menu-touches {
   display: flex;
@@ -212,12 +239,14 @@ body {
   text-align: center;
 }
 .start-menu .start-menu-background .start-menu-box-right .start-menu-btn {
+  cursor: pointer;
   background-image: url(./pictures/ui/menu/StartText.png);
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
   width: 200px;
   height: 100px;
+  cursor: pointer;
 }
 .start-menu .start-menu-background .start-menu-box-right .start-menu-btn:hover {
   background-image: url(./pictures/ui/menu/StartTextSelected.png);
@@ -225,7 +254,15 @@ body {
 .victory {
   width: 960px;
   height: 540px;
-  background: pink;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  cursor: pointer;
+  z-index: 4;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -234,10 +271,17 @@ body {
   filter: blur(20px);
 }
 .pause {
+  position: absolute;
+  z-index: 3;
+  top: -10px;
+  left: -10px;
+  width: calc(100% + 16px);
+  height: calc(100% + 16px);
   font-family: "AmazDooMLeft2", sans-serif;
   width: 960px;
   height: 540px;
-  background-image: url(./pictures/worlds/stage1.png);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -262,18 +306,36 @@ body {
   font-size: 3rem;
   border-radius: 10px;
 }
+.credits {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 5;
+}
 .level {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 4;
   width: 960px;
   height: 540px;
-  background: purple;
-  margin: 25px;
+  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(30px);
 }
 .level .levelup {
   width: 100%;
   height: 100%;
-  background: #fff;
-  opacity: 0;
-  animation: animlevel 4s forwards 2s;
   display: flex;
   flex-direction: column;
   justify-content: center;
