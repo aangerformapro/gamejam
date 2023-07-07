@@ -35,6 +35,7 @@ body {
 }
 #game {
     position: relative;
+    user-select: none;
 }
 #game-world {
     position: relative;
@@ -399,5 +400,21 @@ body {
     }
     100% {
         opacity: 0;
+    }
+}
+#goty {
+    position: absolute;
+
+    width: 100px;
+
+    left: -15px;
+    top: -15px;
+    z-index: 9;
+    transform: rotate(-45deg);
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center center;
     }
 }
