@@ -51,6 +51,16 @@ body {
         right: 8px;
     }
 
+    & > .data {
+        & > div + div {
+            margin-left: 16px;
+        }
+
+        .time {
+            margin-left: auto;
+        }
+    }
+
     svg {
         filter: drop-shadow(6px 6px 5px #000);
     }
@@ -102,7 +112,8 @@ body {
     top: -500vh;
 }
 
-.killed {
+.killed,
+.game-stage {
     color: #ddd;
     font-size: 32px;
     font-family: 'AmazDooMLeft2', sans-serif;
@@ -112,6 +123,7 @@ body {
         margin-left: 4px;
     }
 }
+
 .heart {
     color: #990202;
     font-size: 32px;
@@ -119,13 +131,12 @@ body {
     text-shadow: 6px 6px 5px #000;
 }
 .data {
-    user-select: none;
     position: absolute;
     z-index: 2;
     top: 0;
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    // justify-content: space-between;
     align-items: center;
     font-family: 'AmazDooMLeftOutline', sans-serif;
     padding: 8px;
@@ -146,50 +157,41 @@ body {
         font-family: 'AmazDooMLeft2', sans-serif;
         font-size: 32px;
     }
+}
 
-    #lives {
-        position: absolute;
-        left: calc(50% - 50px);
-        top: -16px;
-        width: 80px;
-        height: 80px;
-        font-family: 'AmazDooMLeft2', sans-serif;
-        color: #990202;
+#lives {
+    position: absolute;
+    z-index: 2;
+    left: calc(50% - 50px);
+    top: -16px;
+    width: 80px;
+    height: 80px;
+    font-family: 'AmazDooMLeft2', sans-serif;
 
-        background-size: contain;
-        background-position: center center;
+    background-size: contain;
+    background-position: center center;
 
-        filter: drop-shadow(6px 6px 5px #000);
+    filter: drop-shadow(6px 6px 5px #000);
 
-        font-size: 36px;
+    &[data-lives] {
+        background-image: url('./pictures/ui/hp/1.png');
+    }
 
-        // &[data-lives]::after {
-        //     content: 'x' attr(data-lives);
-        //     position: absolute;
-        //     bottom: 12px;
-        //     right: -12px;
-        // }
+    &[data-lives='4'] {
+        background-image: url('./pictures/ui/hp/2.png');
+    }
 
-        &[data-lives] {
-            background-image: url('./pictures/ui/hp/1.png');
-        }
+    &[data-lives='3'] {
+        background-image: url('./pictures/ui/hp/3.png');
+    }
 
-        &[data-lives='4'] {
-            background-image: url('./pictures/ui/hp/2.png');
-        }
+    &[data-lives='2'] {
+        background-image: url('./pictures/ui/hp/4.png');
+    }
 
-        &[data-lives='3'] {
-            background-image: url('./pictures/ui/hp/3.png');
-        }
-
-        &[data-lives='2'] {
-            background-image: url('./pictures/ui/hp/4.png');
-        }
-
-        &[data-lives='1'],
-        &[data-lives='0'] {
-            background-image: url('./pictures/ui/hp/5.png');
-        }
+    &[data-lives='1'],
+    &[data-lives='0'] {
+        background-image: url('./pictures/ui/hp/5.png');
     }
 }
 // mort///////
