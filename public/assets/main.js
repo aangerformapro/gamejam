@@ -1,1 +1,3291 @@
-const t="undefined"!=typeof unsafeWindow,e=()=>{},s=t?unsafeWindow:globalThis??window,{JSON:i,document:r}=s,n=t=>t instanceof Object&&Object.getPrototypeOf(t)===Object.prototype,a=t=>void 0===t,o=t=>"string"==typeof t,h=t=>Number.isInteger(t),l=t=>h(t)||(t=>(t=>"number"==typeof t)(t)&&parseFloat(t)===t)(t)||/^-?(?:[\d]+\.)?\d+$/.test(t),c=t=>Array.isArray(t),u=t=>null===t,d=t=>"function"==typeof t;function g(t){return d(t)?t.name:t instanceof Object?Object.getPrototypeOf(t).constructor.name:void 0}function p(t,...e){d(t)&&setTimeout(t,0,...e)}function m(t){return t instanceof Object&&d(t.querySelector)}function f(t=""){if(!o(t))throw new TypeError("name must be a String");let e;for(;-1<(e=t.indexOf("-"));)t=t.slice(0,e)+t.slice(e+1,1).toUpperCase()+t.slice(e+2);return t}function y(t){if(a(t)||u(t))return null;if(o(e=t)&&(l(e)||["true","false","null"].includes(e)||["{","[",'"'].includes(e.slice(0,1))||["}","]",'"'].includes(e.slice(-1))))try{return i.parse(t)}catch(e){return t}var e;return t}function w(t){return d(t)||a(t)||o(t)?t:i.stringify(t)}function v(t,e){let s=[];for(let e in t){const i=t[e];n(i)?s=s.concat(v(i)).map((t=>[[e,t[0]].join("-"),t[1]])):s.push([e,w(i)])}return s.map((t=>e?[[e,t[0]].join("-"),t[1]]:t))}function x(t){return o(t)||m(t)||c(t)}const S=["data","dataset","html","tag","callback"];function E(t="div",e={},s=null){if(n(t)&&(t=(e=t).tag??"div"),"string"!=typeof t)throw new TypeError("tag must be a String");x(e)&&(s=e,e={});const i=o(a=t)&&a.startsWith("<")&&a.endsWith(">")?function(t){if(o(t)&&t.length>0){let e=E("template",t).content;if(0===e.childNodes.length)return;return e.childNodes.length>1?[...e.childNodes]:e.childNodes[0]}}(t):r.createElement(t);var a;let h;if(!m(i))throw new TypeError("Invalid tag supplied "+t);if(n(e)){const t=[];h=e.callback,x(s)||(s=e.html),n(e.data)&&t.push(...v(e.data,"data")),n(e.dataset)&&t.push(...v(e.dataset,"data")),t.forEach((t=>i.setAttribute(...t))),c(e.class)&&(e.class=e.class.join(" "));for(let t in e){if(S.includes(t))continue;let s=e[t];if(o(s)){let e=i.getAttribute(t)??"";e.length>0&&(s=e+" "+s),i.setAttribute(t,s)}else n(s)?v(s,t).forEach((t=>i.setAttribute(...t))):i[t]=s}}if(x(s)){c(s)||(s=[s]);for(let t of s)m(t)?i.appendChild(t):i.innerHTML+=t}return d(h)&&h(i),i}function b(t){if(o(t)){const e=b.a??=E("a");b.a.href=t,t=new URL(e.href)}if(t instanceof URL)return t}class I{static get default(){return this.cases()[0]}static tryFrom(t){return g(t)!==g(this)||d(t)?this.cases().find((e=>e.value===t)):t}static from(t){const e=this.tryFrom(t);if(a(e))throw new TypeError("Cannot find matching enum to: "+w(t));return e}static cases(){return this.keys.map((t=>this[t]))}static get keys(){return Object.keys(this).filter((t=>t[0]===t[0].toUpperCase()&&this[t]instanceof I))}static get size(){return this.keys.length}get name(){return Object.keys(this.constructor).find((t=>this.constructor[t]===this))??""}constructor(t){if(Object.getPrototypeOf(this)===I.prototype)throw new Error("Cannot instantiate BackedEnum directly, it must be extended.");if(a(t)||d(t))throw new TypeError("value is not valid");Object.defineProperty(this,"value",{writable:!1,configurable:!1,enumerable:!0,value:t})}}const k=36e5,A={days:864e5,hours:k,minutes:6e4,seconds:1e3,miliseconds:1};class M{#t=0;#e=!1;#s=!1;#i=0;#r;get startTime(){return this.#t}get stopped(){return 0===this.#t}get running(){return this.#e}get paused(){return this.#s}get elapsed(){return this.#e?+new Date-this.#t:this.#i}get laps(){return this.#r}start(){this.#e||this.#t||(this.#e=!0,this.#r=[],this.#i=0,this.#t=+new Date)}stop(){if(!this.#e)return this.#i;this.#e=!1;let t=this.#t;return this.#t=0,this.#i=+new Date-t}pause(){return!this.#s&&this.#e&&(this.#s=!0,this.#e=!1,this.#i=+new Date-this.#t),this.#i}resume(){this.#s&&!this.stopped&&(this.#s=!1,this.#e=!0,this.#t=+new Date-this.#i)}lap(){let t=this.#r[this.#r.length-1];if(!this.#e)return t??0;let e=t??this.#t,s=this.elapsed-e;return this.#r.push(s),s}constructor(t=!0){this.#r=[],t&&this.start()}}class T{#n;#a;get data(){return this.#a}get days(){return""+this.#a.days}get hours(){return this.#a.hours<10?`0${this.#a.hours}`:`${this.#a.hours}`}get minutes(){return this.#a.minutes<10?`0${this.#a.minutes}`:`${this.#a.minutes}`}get seconds(){return this.#a.seconds<10?`0${this.#a.seconds}`:`${this.#a.seconds}`}get miliseconds(){return this.#a.miliseconds<10?this.#a.miliseconds<100?"00"+this.#a.miliseconds:"0"+this.#a.miliseconds:""+this.#a.miliseconds}get timestamp(){return this.#n}static of(t){return new T(t)}constructor(t){if(!h(t))throw new TypeError("timestamp must be an integer");this.#n=t,this.#a={};for(let e in A){let s=A[e],i=Math.floor(t/s);t-=i*s,this.#a[e]=i}}toString(){return`${this.days}d ${this.hours}:${this.minutes}:${this.seconds}.${this.miliseconds}s`}export(){return Object.assign({timestamp:this.#n},this.#a)}}class j{static of(t){return new j(t)}min={x:0,y:0};max={x:0,y:0};constructor({x:t,y:e,width:s,height:i}){let r=Math.floor(s/4),n=Math.floor(i/4);this.min.x=t+r,this.max.x=t+s-r,this.min.y=e+n,this.max.y=e+i-n}intersects(t){return t instanceof j!=!1&&!(t.max.x<this.min.x||t.min.x>this.max.x||t.max.y<this.min.y||t.min.y>this.max.y)}}class O{world;get x(){throw new Error(g(this)+".x not implemented")}get y(){throw new Error(g(this)+".y not implemented")}get width(){throw new Error(g(this)+".width not implemented")}get height(){throw new Error(g(this)+".height not implemented")}isEnemy=!1;get scoreGain(){return 0}get name(){return g(this)}get ctx(){return this.world.ctx}get box(){return j.of(this)}isIntersecting(t){return t instanceof O!=!1&&this.box.intersects(t.box)}draw(){throw new Error(g(this)+".draw() is not implemented")}constructor(t){if(t instanceof Mt==!1)throw new TypeError("Invalid world !!!");this.world=t}destroy(){this.destroyed=!0}}const D="./assets/sounds",L="./assets/pictures",q=L+"/worlds",N=L+"/hiro",P=L+"/enemy",C=[...Array(3)].map(((t,e)=>P+"/loot/"+(e+1)+".png")),G=new Map;class Y extends I{static MOVING=new Y("moving");get sprites(){return STATES.get(this.value)[0]}getAnimation(t){return G.has(t)||G.set(t,ot(C)),G.get(t)}}class H extends O{width=100;height=100;y=150;#o=null;get x(){return this.#o??=this.world.width+Math.floor(Math.random()*this.world.width*Math.ceil(3*Math.random()))}set x(t){this.#o=t}#h;get scoreGain(){return this.#h??=Math.ceil(250*Math.random())}isEnemy=!1;isDead=!1;draw(){const{ctx:t}=this;this.move(),this.x>this.world.width-this.width||t.drawImage(this.currentSprite,this.x,this.y,this.width,this.height)}move(){this.state=Y.MOVING,this.world.hero.isDead||(this.currentSprite=this.state.getAnimation(this)(),this.x-=this.world.stage.speed),this.x<=0&&(this.#o=null)}destroy(){super.destroy(),this.isDead=!0}}const V=new Map,$=new Map,X=[];class J extends I{static SYNC=new J("sync");static ASYNC=new J("async")}function U(t,s,i=e){let r;if(r=$.get(t).get(s))return r;let n,o=null;const h=new Set,l=t=>{a(t)||u(t)||c(t)},c=e=>{if(function(t,e){return t!=t?e==e:t!==e||t&&"object"==typeof t||"function"==typeof t}(o,e)){o=e;const i=!X.length;for(let t of h)t[1](),X.push([t[0],o]);if(i){t.setItem(s,o);for(let t of X)t[0](t[1]);X.length=0}}};return r={subscribe:(t,s=e)=>{if(d(t)){const r=[t,s];return h.add(r),1===h.size&&(n=i(c)??e),t(o),()=>{h.delete(r),0===h.size&&n&&(n(),n=null)}}},set:c,update:t=>{d(t)&&c(t(o))},get:(e=null)=>{let i=t.getItem(s);return null===i?(d(e)&&((e=e())instanceof Promise?e.then((t=>l(t))):l(e)),e):i}},Object.defineProperty(r,"length",{configurable:!0,get:()=>h.size}),$.get(t).set(s,r),r}class F{get type(){return J.SYNC}constructor(t=""){t&&!t.endsWith(":")&&(t+=":"),V.set(this,t),$.set(this,new Map)}static get type(){return this.prototype.type}key(t){return V.get(this)+t}subscribe(t,s,i=e){return this.hook(t).subscribe(s,i)}hasItem(t){return null!==this.getItem(t)}removeItem(t){this.setItem(t,null)}setMany(t={}){const e=new Map;for(let s in t){const i=t[s];e.set(s,this.setItem(s,i))}return e}getMany(t=[],e=null){return t.map((t=>[t,this.getItem(t,e)]))}hook(t,e=null){return U(this,t,(s=>{s(this.getItem(t,e))}))}clear(){const t=this.keys;for(let e of t)this.removeItem(e);return t}get keys(){throw new Error(g(this)+".keys not implemented.")}getItem(t,e=null){return d(e)&&((e=e())instanceof Promise?e.then((e=>this.setItem(t,e))):this.setItem(t,e)),e}setItem(t,e){throw new Error(g(this)+".setItem() not implemented.")}}if("undefined"==typeof Storage){const t=new Map;class e{get length(){return t.size}key(e){return[...t.keys()][e]??null}clear(){t.clear()}getItem(e){return t.get(e)??null}setItem(e,s){t.set(String(e),String(s))}getItem(e){return t.get(e)??null}removeItem(e){t.delete(e)}}globalThis.Storage??=e,globalThis.localStorage??=new e,globalThis.sessionStorage??=new e,globalThis.addEventListener??=()=>{},globalThis.removeEventListener??=()=>{}}const R="NGSOFT:UUID";function W(){let e="";return t?(null===(e=localStorage.getItem(R))&&localStorage.setItem(R,e=function(){let t,e,s="";for(t=0;t<32;t++)e=16*Math.random()|0,8!=t&&12!=t&&16!=t&&20!=t||(s+="-"),s+=(12==t?4:16==t?3&e|8:e).toString(16);return s}()+":"),e):e}class z extends F{#l;get store(){return this.#l}constructor(t,e=W()){if(t??=localStorage,t instanceof Storage==!1)throw new TypeError("storage not an instance of Storage");super(e),this.#l=t}get keys(){const t=[],e=this.key(""),{store:s}=this;for(let i=0;i<s.length;i++){let r=s.key(i);r.startsWith(e)&&t.push(r.slice(e.length))}return t}getItem(t,e=null){let s=this.store.getItem(this.key(t));return o(s)?super.getItem(t,y(s)):super.getItem(t,e)}setItem(t,e){return null===e?this.store.removeItem(this.key(t)):this.store.setItem(this.key(t),w(e)),e}hook(t,e=null){return U(this,t,(s=>{const i=e=>{e.storageArea===this.store&&e.key===this.key(t)&&s(y(e.newValue))};return addEventListener("storage",i),s(this.getItem(t,e)),()=>{removeEventListener("storage",i)}}))}}const K=new z;new z(sessionStorage);const B=K.hook("muted",!1);[...Array(8)].map(((t,e)=>D+"/soundtrack/"+(e+1)+".ogg"));const Q=".ogg",Z=new Map,_=document.querySelector("#audioplayers");class tt extends I{static Stage1=new tt(1);static Stage2=new tt(2);static Stage3=new tt(3);static Stage4=new tt(4);static Stage5=new tt(5);static Stage6=new tt(6);static Stage7=new tt(7);static Stage8=new tt(8);static pauseAll(){this.cases().forEach((t=>t.pause()))}get url(){return b(D+"/soundtrack/"+this.value+Q)}set player(t){Z.set(this,t),B.subscribe((e=>{t.muted=e||null}))}get player(){return Z.get(this)}play(){return this.load(),st(this.player)}pause(){this.player?.pause()}destroy(){this.pause(),Z.delete(this)}load(){if(!Z.has(this)){const t=E("audio",{src:this.url});_.appendChild(t),this.player=t}}}class et extends I{static DEATH=new et("death");static DROP=new et("drop");static HIT=new et("hit");static JUMP=new et("jump");static LEVEL=new et("level");static pauseAll(){this.cases().forEach((t=>t.pause()))}get url(){return b(D+"/effects/"+this.value+Q)}set player(t){Z.set(this,t),B.subscribe((e=>{t.muted=e||null}))}get player(){return Z.get(this)}play(){return this.load(),st(this.player)}pause(){this.player?.pause()}destroy(){this.pause(),Z.delete(this)}load(){if(!Z.has(this)){const t=E("audio",{src:this.url});_.appendChild(t),this.player=t}}}function st(t){return new Promise(((e,s)=>{if(m(t)){if(t.currentTime=0,setTimeout((()=>{e(t)}),1e3*t.duration+200),t.paused&&!t.muted)try{t.play()}catch(t){console.warn(t)}}else s(new TypeError("not an element"))}))}let it=0;const rt=new Set;function nt(t=e){let s=0;return e=>{s++,it++,e.onload=()=>{s--,it--,0===s&&(t(),0===it&&rt.forEach((t=>t())))}}}const at=nt();function ot(t,e=!0){let s=0,i=0;const r=t.map((t=>{const e=new Image;return at(e),e.src=t,e}));return()=>{let t=!0;return i++,i%4==0&&s++,s>=r.length&&(s=0,t=e),t&&r[s]}}const ht=new Map([["moving",[[...Array(9)].map(((t,e)=>N+"/moving/"+(e+1)+".png")),!0]],["attacking",[[...Array(6)].map(((t,e)=>N+"/attacking/"+(e+1)+".png")),!1]],["dead",[[...Array(10)].map(((t,e)=>N+"/dead/"+(e+1)+".png")),!1]]]);class lt extends I{static MOVING=new lt("moving");static ATTACKING=new lt("attacking");static DEAD=new lt("dead");get sprites(){return ht.get(this.value)[0]}#c;getAnimation(){return this.#c??=ot(...ht.get(this.value))}}class ct extends O{maxHP=6;hp=6;killCount=0;x=100;y=350;width=150;height=150;minY=150;maxY=350;gravity=1;jumpStep=15;deltaY=0;isJumping=!1;isAttacking=!1;isDead=!1;state=lt.MOVING;currentSprite=!1;intercepting=[];draw(){const{ctx:t}=this;this.isJumping&&this.jump(),this.isAttacking&&this.attack(),this.isAttacking||this.move(),this.intersections(),this.isDead&&this.dead(),t.drawImage(this.currentSprite,this.x,this.y,this.width,this.height)}dead(){this.isDead&&(this.state=lt.DEAD,!1===(this.currentSprite=this.state.getAnimation(this)())&&(this.world.pause(),this.world.trigger("dead",{item:this})))}move(){this.state=lt.MOVING,this.currentSprite=this.state.getAnimation(this)()}attack(){this.isAttacking&&(this.state=lt.ATTACKING,!1===(this.currentSprite=this.state.getAnimation(this)())&&(this.isAttacking=!1)),this.isAttacking||(this.state=lt.MOVING,this.move())}jump(){if(this.isJumping){if(0===this.deltaY)this.deltaY=-this.jumpStep*this.gravity;else if(this.y<=this.minY)this.deltaY=-1*this.deltaY,this.y=this.minY;else if(this.y>=this.maxY)return this.deltaY=0,this.isJumping=!1,void(this.y=this.maxY);this.y+=this.deltaY}}intersections(){this.intercepting=this.intercepting.filter((t=>!(t.destroyed||!t.isIntersecting(this))));for(let t of[...this.world.objects])t.isIntersecting(this)&&!this.intercepting.includes(t)&&t.scoreGain>0&&(this.intercepting.push(t),!t.isEnemy||this.isAttacking?(this.world.score+=t.scoreGain,this.world.destroyObject(t),t instanceof H&&et.DROP.play(),t.isEnemy&&(this.killCount++,this.world.stage.generateEnemy()),this.world.trigger("scoregain",{item:t})):t.isEnemy&&(this.hp--,this.world.trigger("hploss",{item:t}),this.hp<=0?(et.DEATH.play(),this.isDead=!0):et.HIT.play()))}}const ut=[[...Array(9)].map(((t,e)=>P+"/cyclops/"+(e+1)+".png")),[...Array(9)].map(((t,e)=>P+"/minos/"+(e+1)+".png")),[...Array(9)].map(((t,e)=>P+"/wherewolf/"+(e+1)+".png")),[...Array(9)].map(((t,e)=>P+"/orc/"+(e+1)+".png"))],dt=new Map([["moving",[[...Array(9)].map(((t,e)=>P+"/demon/moving/"+(e+1)+".png")),!0]]]),gt=new Map;class pt extends I{static MOVING=new pt("moving");get sprites(){return dt.get(this.value)[0]}getAnimation(t){return gt.has(t)||gt.set(t,ot(t.sprites)),gt.get(t)}}class mt extends O{isEnemy=!0;isDead=!1;#h;get scoreGain(){return this.#h??=Math.ceil(500*Math.random())}get width(){return this.world.hero.width}get height(){return this.world.hero.height}get y(){return this.world.hero.maxY}set y(t){}#o;get x(){return this.#o??=this.world.width+Math.floor(Math.random()*this.world.width*Math.ceil(3*Math.random()))}set x(t){this.#o=t}#u;get sprites(){return this.#u??=ut[Math.floor(Math.random()*ut.length)]}state=pt.MOVING;currentSprite=!1;draw(){const{ctx:t}=this;this.move(),this.x>this.world.width-this.width||t.drawImage(this.currentSprite,this.x,this.y,this.width,this.height)}move(){this.state=pt.MOVING,this.world.hero.isDead||(this.currentSprite=this.state.getAnimation(this)(),this.x-=this.world.stage.speed),this.x<=0&&(this.#o=null)}destroy(){super.destroy(),this.isDead=!0}}const ft=nt();const yt=[...Array(8)].map(((t,e)=>q+"/stage"+(e+1)+".png")).map((function(t){const e=new Image;return ft(e),e.src=t,e}));class wt extends O{#d=0;get level(){return this.#d}set level(t){this.#d=t,this.reset(),this.world.trigger("levelchange")}enemies=0;enemiesPerStageRatio=5;get soundtrack(){return tt.cases()[this.level]}get maxEnemies(){return this.stage*this.enemiesPerStageRatio}get stage(){return this.level+1}loops=0;loopIncreased=!1;get maxLoops(){return this.world.loopsToClearStage}speed=10;deltaX=0;x=0;y=0;get width(){return this.world.width}get height(){return this.world.height}get decor(){return yt[this.level]??yt.slice(-1)[0]}reset(){this.enemies=this.deltaX=this.loops=0,this.loopIncreased=!1,this.world.objects.length=0}draw(){this.generateEnemies();const{decor:t,ctx:e}=this;this.world.hero.isDead||(this.deltaX+=this.speed),this.deltaX>=this.width&&(this.deltaX=0,this.loops++,this.loopIncreased=!0,this.loops>=this.maxLoops&&(et.LEVEL.play(),this.world.pause(),this.world.trigger("stagecleared"))),e.drawImage(t,this.deltaX,0,this.width-this.deltaX,this.height,0,0,this.width-this.deltaX,this.height),e.drawImage(t,0,0,this.deltaX,this.height,this.width-this.deltaX,0,this.deltaX,this.height)}generateEnemy(){this.enemies<this.maxEnemies&&(this.world.objects.push(new mt(this.world)),this.world.objects.push(new H(this.world)))}generateEnemies(){(0===this.enemies||this.loopIncreased)&&(this.loopIncreased&&(this.loopIncreased=!1),this.enemies<this.maxEnemies&&(this.generateEnemy(),this.enemies++))}constructor(t){super(t),t.on("started resume levelchange",(()=>{tt.pauseAll(),this.soundtrack.play()})).on("paused stagecleared",(()=>{this.soundtrack.pause()}))}}class vt{#g;#p;get length(){return this.#g.length}constructor(t=!0){this.#g=[],this.#p=!0===t}on(t,e,s=!1){if(!o(t))throw new TypeError("Invalid event type, not a String.");if(!d(e))throw new TypeError("Invalid listener, not a function");return t.split(/\s+/).forEach((t=>{this.#g.push({type:t,listener:e,once:!0===s})})),this}one(t,e){return this.on(t,e,!0)}off(t,e){if(!o(t))throw new TypeError("Invalid event type, not a String.");return t.split(/\s+/).forEach((t=>{this.#g=this.#g.filter((s=>!!(t!==s.type||e!==s.listener&&e)))})),this}trigger(t,e=null,s=null){let i;if(s??=this.#p,t instanceof Event&&(i=t,i.data??=e,t=i.type),!o(t)&&t instanceof Event==!1)throw new TypeError("Invalid event type, not a String|Event.");const r=[];return t.split(/\s+/).forEach((t=>{if(!r.includes(t)){r.push(t);for(let r of function(t,e){return t.filter((t=>t.type===e))}(this.#g,t))r.type===t&&(s?p(r.listener,i??{type:t,data:e}):r.listener(i??{type:t,data:e}),r.once&&this.off(t,r.listener))}})),this}mixin(t){return t instanceof Object&&["on","off","one","trigger"].forEach((e=>{Object.defineProperty(t,e,{enumerable:!1,configurable:!0,value:(...s)=>(this[e](...s),t)})})),this}static mixin(t,e=!0){return new vt(e).mixin(t)}static on(t,e,s=!1){return xt.on(t,e,s)}static one(t,e){return xt.one(t,e)}static off(t,e){return xt.off(t,e)}static trigger(t,e=null,s=null){return xt.trigger(t,e,s)}}const xt=new vt;let St={set(t,e,s){Et.includes(s)&&this.remove(t,e),bt(e).forEach((e=>{t.dataset[e]=w(s)}))},get(t,e,s=null){let i=bt(e).map((e=>y(t.dataset[e]))).map((t=>Et.includes(t)?s:t));return i.length<=1?i[0]??s:i},remove(t,e){bt(e).forEach((e=>delete t.dataset[e]))}},Et=[null,undefined];function bt(t){let e=[];return o(t)&&(t.startsWith("data-")&&(t=t.slice(5)),e=[f(t)]),c(t)&&(e=e.concat(...t.map((t=>bt(t))))),e}function It(t){return kt(t)?[t]:t instanceof NodeList?[...t]:c(t)?t.filter((t=>kt(t))):function(t){try{return o(t)&&null===r.createElement("template").querySelector(t)}catch(t){return!1}}(t)?[...document.querySelectorAll(t)]:[]}function kt(t){return t instanceof Object&&t.dataset instanceof DOMStringMap}let At=!1;class Mt{element;paused=!0;timeout=null;score=0;loopsToClearStage=10;objects=[];get ctx(){return this.canvas.getContext("2d")}get width(){return y(this.canvas.width)}get height(){return y(this.canvas.height)}get time(){const t=T.of(this.chrono.elapsed);return(t.hours>0?t.hours+":":"")+t.minutes+":"+t.seconds}constructor({element:t}={}){vt.mixin(this,!1),this.element=t,this.chrono=new M(!1),this.displayScore=t.querySelector("#score"),this.displayTime=t.querySelector("#time"),this.displayHP=t.querySelector("#lives"),this.canvas=t.querySelector("canvas")}destroy(){this.pause(),At=!1,this.objects.forEach((t=>t.destroy())),requestAnimationFrame((()=>this.clearScreen()))}destroyObject(t){if(t instanceof O){let e=this.objects.indexOf(t);e>-1&&(t.destroy(),this.objects.splice(e,1))}}init(){At||(this.stage=new wt(this),this.hero=new ct(this),this.objects.length=0,this.resume())}pause(){this.paused||(this.paused=!0,this.chrono.pause(),this.timeout&&(clearTimeout(this.timeout),this.timeout=null),this.trigger("paused"))}resume(){this.paused&&(this.paused=!1,this.chrono.stopped?(this.chrono.start(),this.trigger("started")):(this.chrono.resume(),this.trigger("resume")),requestAnimationFrame((()=>this.draw())))}clearScreen(){this.ctx.clearRect(0,0,this.width,this.height)}draw(){if(this.paused)return;const{displayScore:t,displayTime:e,displayHP:s}=this;this.clearScreen(),this.stage.draw(),this.objects.forEach((t=>t.draw())),this.hero.draw(),t.innerHTML=this.score,e.innerHTML=this.time,function(t,e,s){function i(e,s=null){let i=t[0];return kt(i)?St.get(i,e,s):s}function r(e,s){if(n(e))for(let t in e)r(t,e[t]);else t.forEach((t=>St.set(t,e,s)));return a}t=It(t);const a={get:i,set:r,remove:function(e){return t.forEach((t=>St.remove(t,e))),a}};switch(arguments.length){case 2:return i(e);case 3:return r(e,s)}}(s,"lives",this.hero.hp),this.timeout=setTimeout((()=>{requestAnimationFrame((()=>this.draw()))}),16)}}const Tt=document.querySelector(".start-menu"),jt=document.querySelector(".death-container"),Ot=document.querySelector(".level"),Dt=document.querySelector(".victory"),Lt=document.querySelector(".pause"),qt=document.querySelector(".credits"),Nt=document.querySelector("#goty");let Pt;addEventListener("keydown",(t=>{const{key:e}=t;if(" "===e){if(Pt.paused)return;t.preventDefault(),Pt.hero.isJumping||(Pt.hero.isJumping=!0,et.JUMP.play())}else if("p"===e)t.preventDefault(),Pt.paused?Pt.resume():Pt.pause();else if("e"===e){if(Pt.paused)return;t.preventDefault(),Pt.hero.isAttacking||(Pt.hero.isAttacking=!0)}})),addEventListener("click",(({target:t})=>{Pt&&(Pt.paused||t.closest("#game")&&!Pt.hero.isAttacking&&(Pt.hero.isAttacking=!0))})),Tt.addEventListener("click",(t=>{const{target:e}=t;e.closest(".start-menu-btn")?(Pt=new Mt({element:document.querySelector("#game")}),Pt.on("paused",(()=>{Lt.hidden=null})).on("resume started",(()=>{Lt.hidden=!0})).on("stagecleared",(()=>{Lt.hidden=!0,8===Pt.stage.stage?Dt.hidden=null:(Ot.hidden=null,setTimeout((()=>{Ot.hidden=!0,Pt.stage.level++}),3500))})).on("dead",(()=>{jt.querySelector(".score-span").innerHTML=document.querySelector("#score").innerHTML,jt.querySelector(".time-span").innerHTML=document.querySelector("#time").innerHTML,Lt.hidden=!0,jt.hidden=null})).on("levelchange",(()=>{const{hero:t}=Pt;for(;t.hp<t.maxHP&&Pt.score>=1e3;)Pt.score-=1e3,t.hp++;Pt.resume()})),Tt.hidden=!0,Nt.hidden=!0,Pt.init()):e.closest(".start-menu-credit")&&(qt.hidden=null)})),qt.addEventListener("click",(()=>{qt.hidden=!0})),Lt.addEventListener("click",(({target:t})=>{t.closest("button")&&Pt.resume()})),jt.addEventListener("click",(({target:t})=>{t.closest(".retry")&&(jt.hidden=!0,Pt.destroy(),Tt.hidden=null,Nt.hidden=null)})),Dt.addEventListener("click",(()=>{Dt.hidden=!0,Pt?.destroy(),Tt.hidden=null,Nt.hidden=null}));
+/* global unsafeWindow, globalThis */
+
+
+
+const IS_UNSAFE = typeof unsafeWindow !== 'undefined',
+    noop = () => { },
+    global = IS_UNSAFE ? unsafeWindow : globalThis ?? window,
+    { JSON, document: document$1 } = global,
+    isPlainObject = (param) => param instanceof Object && Object.getPrototypeOf(param) === Object.prototype,
+    isUndef = (param) => typeof param === 'undefined',
+    isString = (param) => typeof param === 'string',
+    isNumber = (param) => typeof param === 'number',
+    isInt = (param) => Number.isInteger(param),
+    isFloat = (param) => isNumber(param) && parseFloat(param) === param,
+    isNumeric = (param) => isInt(param) || isFloat(param) || /^-?(?:[\d]+\.)?\d+$/.test(param),
+    isArray = (param) => Array.isArray(param),
+    isNull = (param) => param === null,
+    isCallable = (param) => typeof param === 'function',
+    isFunction = isCallable;
+
+
+
+function getClass(param)
+{
+
+    if (isFunction(param))
+    {
+        return param.name;
+    }
+    else if (param instanceof Object)
+    {
+        return Object.getPrototypeOf(param).constructor.name;
+    }
+
+}
+
+function runAsync(callback, ...args)
+{
+    if (isFunction(callback))
+    {
+        setTimeout(callback, 0, ...args);
+    }
+}
+
+
+
+function isValidSelector(selector)
+{
+
+    try
+    {
+        return isString(selector) && null === document$1.createElement('template').querySelector(selector);
+
+    } catch (e)
+    {
+        return false;
+    }
+
+}
+
+
+function uuidv4()
+{
+    let uuid = "", i, random;
+    for (i = 0; i < 32; i++)
+    {
+        random = Math.random() * 16 | 0;
+        if (i == 8 || i == 12 || i == 16 || i == 20)
+        {
+            uuid += "-";
+        }
+        uuid += (i == 12 ? 4 : (i == 16 ? (random & 3 | 8) : random)).toString(16);
+    }
+    return uuid;
+}
+
+
+function isElement(elem)
+{
+    return elem instanceof Object && isFunction(elem.querySelector);
+}
+
+
+function toCamel(name = '')
+{
+
+    if (!isString(name))
+    {
+        throw new TypeError('name must be a String');
+    }
+
+    let index;
+    while (-1 < (index = name.indexOf("-")))
+    {
+        name = name.slice(0, index) + name.slice(index + 1, 1).toUpperCase() + name.slice(index + 2);
+    }
+    return name;
+}
+
+function isHTML(param)
+{
+    return isString(param) && param.startsWith('<') && param.endsWith('>');
+}
+
+
+
+function isJSON(param)
+{
+
+    if (!isString(param))
+    {
+        return false;
+    }
+
+    return (
+        isNumeric(param) ||
+        ['true', 'false', 'null'].includes(param) ||
+        ['{', '[', '"'].includes(param.slice(0, 1)) ||
+        ['}', ']', '"'].includes(param.slice(-1))
+    );
+
+}
+
+
+function decode(value)
+{
+
+    if (isUndef(value) || isNull(value))
+    {
+        return null;
+    }
+    if (isJSON(value))
+    {
+        try
+        {
+            return JSON.parse(value);
+        } catch (error)
+        {
+            // fallback for invalid json data
+            return value;
+        }
+
+    }
+
+    return value;
+}
+
+
+function encode(value)
+{
+
+    if (isFunction(value) || isUndef(value))
+    {
+        return value;
+    }
+
+
+    return isString(value) ? value : JSON.stringify(value);
+}
+
+
+function parseAttributes(obj, /** @type {string|undefined} */ name)
+{
+
+    let result = [];
+
+    for (let key in obj)
+    {
+        const value = obj[key];
+
+        if (isPlainObject(value))
+        {
+            result = result.concat(parseAttributes(value)).map(
+                item => [[key, item[0]].join('-'), item[1]]
+            );
+
+            continue;
+        }
+        result.push([key, encode(value)]);
+    }
+    return result.map(item => name ? [[name, item[0]].join('-'), item[1]] : item);
+}
+
+
+
+
+
+function validateHtml(html)
+{
+    return isString(html) || isElement(html) || isArray(html);
+}
+
+const RESERVED_KEYS = [
+    'data', 'dataset',
+    'html', 'tag',
+    'callback'
+];
+
+
+/**
+ * Shorthand to create element effortlessly
+ * if no params are given a <div></div> will be generated
+ * 
+ * @param {String} [tag] tag name / html / emmet
+ * @param {Object} [params] params to inject into element
+ * @param {String|HTMLElement|String[]|HTMLElement[]} [html] 
+ * @returns 
+ */
+function createElement(
+    tag = 'div',
+    params = {},
+    html = null
+)
+{
+
+    if (isPlainObject(tag))
+    {
+        params = tag;
+        tag = params.tag ?? 'div';
+    }
+
+    if (typeof tag !== 'string')
+    {
+        throw new TypeError('tag must be a String');
+    }
+
+    if (validateHtml(params))
+    {
+        html = params;
+        params = {};
+    }
+
+    const elem = isHTML(tag) ? html2element(tag) : document$1.createElement(tag);
+
+    let callback;
+
+    if (!isElement(elem))
+    {
+        throw new TypeError("Invalid tag supplied " + tag);
+    }
+
+    if (isPlainObject(params))
+    {
+        const data = [];
+
+        callback = params.callback;
+
+        if (!validateHtml(html))
+        {
+            html = params.html;
+        }
+
+        if (isPlainObject(params.data))
+        {
+            data.push(...parseAttributes(params.data, 'data'));
+        }
+
+        if (isPlainObject(params.dataset))
+        {
+            data.push(...parseAttributes(params.dataset, 'data'));
+        }
+
+
+        data.forEach(item => elem.setAttribute(...item));
+
+
+        if (isArray(params.class))
+        {
+            params.class = params.class.join(" ");
+        }
+
+        for (let attr in params)
+        {
+            if (RESERVED_KEYS.includes(attr))
+            {
+                continue;
+            }
+
+            let value = params[attr];
+
+            if (isString(value))
+            {
+                let current = elem.getAttribute(attr) ?? '';
+                if (current.length > 0)
+                {
+                    value = current + ' ' + value;
+                }
+
+                elem.setAttribute(attr, value);
+            }
+            else if (isPlainObject(value))
+            {
+                parseAttributes(value, attr).forEach(item => elem.setAttribute(...item));
+            }
+            else
+            {
+                elem[attr] = value;
+            }
+        }
+
+
+    }
+
+    if (validateHtml(html))
+    {
+        if (!isArray(html))
+        {
+            html = [html];
+        }
+
+        for (let child of html)
+        {
+            if (isElement(child))
+            {
+                elem.appendChild(child);
+            }
+            else
+            {
+                elem.innerHTML += child;
+            }
+        }
+    }
+
+    if (isFunction(callback))
+    {
+        callback(elem);
+    }
+
+    return elem;
+
+}
+
+/**
+ * Creates an HTMLElement from html code
+ * @param {string} html
+ * @returns {HTMLElement|Array|undefined}
+ */
+function html2element(html)
+{
+    if (isString(html) && html.length > 0)
+    {
+        let template = createElement('template', html),
+            content = template.content;
+        if (content.childNodes.length === 0)
+        {
+            return;
+        }
+        else if (content.childNodes.length > 1)
+        {
+            return [...content.childNodes];
+        }
+        return content.childNodes[0];
+    }
+}
+
+
+/**
+ * Resolves an URL
+ * 
+ * @param {URL|String} url 
+ * @returns {URL|undefined}
+ */
+function getUrl(url)
+{
+    if (isString(url))
+    {
+        const a = getUrl.a ??= createElement("a");
+        getUrl.a.href = url;
+        url = new URL(a.href);
+    }
+
+
+    if (url instanceof URL)
+    {
+        return url;
+    }
+
+}
+
+
+/**
+ * PHP BackedEnum like Api
+ * Accepts more types than (str|int)
+ */
+class BackedEnum
+{
+
+
+    /**
+     * This is the first defined case
+     * Overrirde this to set your own default case
+     */
+    static get default()
+    {
+        return this.cases()[0];
+    }
+
+
+    /**
+     * Get the enum from the value
+     */
+    static tryFrom(value)
+    {
+
+        if (getClass(value) === getClass(this) && !isFunction(value))
+        {
+            return value;
+        }
+
+        return this.cases().find(x => x.value === value);
+    }
+
+    /**
+     * Throws if enum does not exists
+     */
+    static from(value)
+    {
+
+        const result = this.tryFrom(value);
+
+        if (isUndef(result))
+        {
+            throw new TypeError("Cannot find matching enum to: " + encode(value));
+        }
+        return result;
+    }
+
+
+    /**
+     * 
+     * @returns {BackedEnum[]}
+     */
+    static cases()
+    {
+        return this.keys.map(x => this[x]);
+    }
+
+
+    /**
+     * Gets names from the enums
+     * they must be camel cased or uppercased
+     */
+    static get keys()
+    {
+        return Object.keys(this).filter(name => name[0] === name[0].toUpperCase() && this[name] instanceof BackedEnum);
+    }
+
+    /**
+     * Get the number of values
+     * length is buggy on static classes
+     */
+    static get size()
+    {
+        return this.keys.length;
+    }
+
+
+    //------------------- Instance implementation -------------------
+
+
+    /**
+     * Get current enum name
+     * Only works if enum instanciated correctly
+     * and after the constructor has been called
+     */
+    get name()
+    {
+        return Object.keys(this.constructor).find(
+            key => this.constructor[key] === this
+        ) ?? '';
+    }
+
+
+    constructor(value)
+    {
+
+        if (Object.getPrototypeOf(this) === BackedEnum.prototype)
+        {
+            throw new Error('Cannot instantiate BackedEnum directly, it must be extended.');
+        }
+
+        if (isUndef(value) || isFunction(value))
+        {
+            throw new TypeError('value is not valid');
+        }
+
+        Object.defineProperty(this, "value", {
+            writable: false, configurable: false, enumerable: true,
+            value
+        });
+
+
+    }
+}
+
+const MILISECOND = 1,
+    SECOND = 1000,
+    MINUTE = 60 * SECOND,
+    HOUR = 60 * MINUTE,
+    DAY = 24 * HOUR;
+
+
+const DIVIDERS = {
+    days: DAY,
+    hours: HOUR,
+    minutes: MINUTE,
+    seconds: SECOND,
+    miliseconds: MILISECOND
+};
+
+class Chronometer
+{
+    #start = 0;
+    #running = false;
+    #paused = false;
+    #elapsed = 0;
+    #laps;
+
+
+    get startTime()
+    {
+        return this.#start;
+    }
+
+    get stopped()
+    {
+        return this.#start === 0;
+    }
+
+
+    get running()
+    {
+        return this.#running;
+    }
+
+    get paused()
+    {
+        return this.#paused;
+    }
+
+    get elapsed()
+    {
+
+        if (this.#running)
+        {
+            return +new Date() - this.#start;
+        }
+        return this.#elapsed;
+    }
+
+    get laps()
+    {
+        return this.#laps;
+    }
+
+
+
+    start()
+    {
+        if (!this.#running && !this.#start)
+        {
+            this.#running = true;
+            this.#laps = [];
+            this.#elapsed = 0;
+            this.#start = +new Date();
+        }
+    }
+
+
+    stop()
+    {
+        if (!this.#running)
+        {
+            return this.#elapsed;
+        }
+        this.#running = false;
+        let start = this.#start;
+        this.#start = 0;
+        return this.#elapsed = +new Date() - start;
+    }
+
+
+    pause()
+    {
+        if (!this.#paused && this.#running)
+        {
+            this.#paused = true;
+            this.#running = false;
+            this.#elapsed = +new Date() - this.#start;
+        }
+        return this.#elapsed;
+    }
+
+
+    resume()
+    {
+
+        if (!this.#paused || this.stopped)
+        {
+            return;
+        }
+
+        this.#paused = false;
+        this.#running = true;
+        this.#start = +new Date() - this.#elapsed;
+    }
+
+
+    lap()
+    {
+
+        let prevLap = this.#laps[this.#laps.length - 1];
+
+        if (!this.#running)
+        {
+            return prevLap ?? 0;
+        }
+
+        let
+            prev = prevLap ?? this.#start,
+            current = this.elapsed,
+            time = current - prev;
+
+        this.#laps.push(time);
+
+        return time;
+    }
+
+
+
+    constructor(auto = true)
+    {
+        this.#laps = [];
+        if (auto)
+        {
+            this.start();
+        }
+    }
+
+}
+
+
+
+class TimeReader
+{
+
+    #timestamp;
+    #data;
+
+    get data()
+    {
+        return this.#data;
+    }
+
+    get days()
+    {
+        return '' + this.#data.days;
+    }
+    get hours()
+    {
+        return this.#data.hours < 10 ? `0${this.#data.hours}` : `${this.#data.hours}`;
+    }
+
+    get minutes()
+    {
+        return this.#data.minutes < 10 ? `0${this.#data.minutes}` : `${this.#data.minutes}`;
+    }
+    get seconds()
+    {
+        return this.#data.seconds < 10 ? `0${this.#data.seconds}` : `${this.#data.seconds}`;
+    }
+    get miliseconds()
+    {
+        return this.#data.miliseconds < 10 ? (this.#data.miliseconds < 100 ? '00' + this.#data.miliseconds : '0' + this.#data.miliseconds) : '' + this.#data.miliseconds;
+    }
+
+    get timestamp()
+    {
+        return this.#timestamp;
+    }
+
+    static of(timestamp)
+    {
+        return new TimeReader(timestamp);
+    }
+
+    constructor(timestamp)
+    {
+        if (!isInt(timestamp))
+        {
+            throw new TypeError('timestamp must be an integer');
+        }
+
+        this.#timestamp = timestamp;
+        this.#data = {};
+
+
+        for (let key in DIVIDERS)
+        {
+
+            let
+                divider = DIVIDERS[key],
+                value = Math.floor(timestamp / divider);
+            timestamp -= value * divider;
+            this.#data[key] = value;
+        }
+    }
+
+    toString()
+    {
+        return `${this.days}d ${this.hours}:${this.minutes}:${this.seconds}.${this.miliseconds}s`;
+    }
+
+
+    export()
+    {
+
+        return Object.assign({ timestamp: this.#timestamp }, this.#data);
+    }
+
+}
+
+class Box
+{
+
+
+    static of(gameobj)
+    {
+        return new Box(gameobj);
+    }
+
+
+    min = {
+        x: 0,
+        y: 0,
+    };
+
+    max = {
+        x: 0,
+        y: 0,
+    };
+
+
+    constructor({ x, y, width, height })
+    {
+        let offsetW = Math.floor(width / 4), offsetH = Math.floor(height / 4);
+
+
+        this.min.x = x + offsetW;
+        this.max.x = x + width - offsetW;
+        this.min.y = y + offsetH;
+        this.max.y = y + height - offsetH;
+    }
+
+    /**
+     * @link https://github.com/mrdoob/three.js/blob/dev/src/math/Box2.js
+     */
+    intersects(box)
+    {
+        if (box instanceof Box === false)
+        {
+            return false;
+        }
+
+        return box.max.x < this.min.x || box.min.x > this.max.x ||
+            box.max.y < this.min.y || box.min.y > this.max.y ? false : true;
+
+    }
+}
+
+
+
+class GameObject
+{
+
+
+    world;
+
+    /**
+     * @abstract
+     */
+    get x()
+    {
+
+        throw new Error(getClass(this) + '.x not implemented');
+
+    }
+
+    /**
+     * @abstract
+     */
+    get y()
+    {
+        throw new Error(getClass(this) + '.y not implemented');
+
+    }
+
+    /**
+     * @abstract
+     */
+
+    get width()
+    {
+        throw new Error(getClass(this) + '.width not implemented');
+
+    }
+    /**
+     * @abstract
+     */
+    get height()
+    {
+        throw new Error(getClass(this) + '.height not implemented');
+
+    }
+
+    isEnemy = false;
+    // gain score when intersecting non ennemy object || intersecting ennemy + attacking
+    get scoreGain()
+    {
+        return 0;
+    }
+
+
+
+    get name()
+    {
+        return getClass(this);
+    }
+
+    get ctx()
+    {
+        return this.world.ctx;
+    }
+
+
+    get box()
+    {
+        return Box.of(this);
+
+    }
+
+
+    isIntersecting(obj)
+    {
+        if (obj instanceof GameObject === false)
+        {
+            return false;
+        }
+
+        return this.box.intersects(obj.box);
+    }
+
+
+    /**
+     * @abstract
+     */
+    draw()
+    {
+        throw new Error(getClass(this) + '.draw() is not implemented');
+    }
+
+
+
+    constructor(world)
+    {
+        if (world instanceof GameWorld === false)
+        {
+            throw new TypeError('Invalid world !!!');
+        }
+
+        this.world = world;
+    }
+
+
+    destroy()
+    {
+
+        this.destroyed = true;
+
+    }
+
+
+
+
+
+}
+
+const SOUNDS = './assets/sounds',
+    PICTURES$1 = './assets/pictures',
+    WORLDS = PICTURES$1 + '/worlds',
+    HERO = PICTURES$1 + '/hiro',
+    ENEMY = PICTURES$1 + '/enemy';
+
+const SPRITES$1 = [...Array(3)].map((_, n) => ENEMY + '/loot/' + (n + 1) + '.png');
+
+
+
+
+const animationMoving$1 = new Map();
+
+
+class LootState extends BackedEnum
+{
+    static MOVING = new LootState('moving');
+
+
+    get sprites()
+    {
+        return STATES.get(this.value)[0];
+    }
+
+
+
+    getAnimation(instance)
+    {
+
+        if (!animationMoving$1.has(instance))
+        {
+            animationMoving$1.set(instance, animate(SPRITES$1));
+        }
+        return animationMoving$1.get(instance);
+    }
+}
+
+
+class Loot extends GameObject
+{
+
+
+
+
+    // implement gameObject
+    width = 100;
+    height = 100;
+
+    y = 150;
+
+
+    #x = null;
+    get x()
+    {
+        return this.#x ??= this.world.width + Math.floor(Math.random() * this.world.width * Math.ceil(Math.random() * 3));
+
+    }
+
+    set x(value)
+    {
+        this.#x = value;
+    }
+    #points;
+    get scoreGain()
+    {
+        return this.#points ??= Math.ceil(Math.random() * 250);
+    }
+
+    isEnemy = false;
+    isDead = false;
+
+
+
+    draw()
+    {
+        const { ctx } = this;
+
+        this.move();
+
+
+        // don't draw it out of the canvas
+        if (this.x > this.world.width - this.width)
+        {
+            return;
+        }
+
+
+
+        ctx.drawImage(this.currentSprite,
+            this.x, this.y,
+            this.width, this.height
+        );
+    }
+
+
+    move()
+    {
+
+        this.state = LootState.MOVING;
+
+
+        // move with the stage
+        if (!this.world.hero.isDead)
+        {
+            this.currentSprite = this.state.getAnimation(this)();
+            this.x -= this.world.stage.speed;
+        }
+
+
+
+        if (this.x <= 0)
+        {
+            this.#x = null;
+        }
+    }
+
+
+
+    destroy()
+    {
+        super.destroy();
+
+        this.isDead = true;
+    }
+
+
+
+}
+
+/**
+ * Private properties
+ */
+const
+    SEP$1 = ':',
+    _prefixes = new Map(),
+    _hooks = new Map(),
+    _queue = [];
+
+
+class DataStoreType extends BackedEnum
+{
+    static SYNC = new DataStoreType('sync');
+    static ASYNC = new DataStoreType('async');
+}
+
+
+function safeNotEqual(value, newValue)
+{
+    return value != value ? newValue == newValue : value !== newValue || ((value && typeof value === 'object') || typeof value === 'function');
+}
+
+
+function GetDataStoreHook(
+    /** @type {DataStore} */ store,
+    /** @type {string} */ name,
+    /** @type {function} */ init = noop
+)
+{
+
+    let $that;
+
+    if ($that = _hooks.get(store).get(name))
+    {
+        return $that;
+    }
+
+    let stop, value = null;
+
+    const
+        subscribers = new Set(),
+        safeSet = (value) =>
+        {
+            if (!isUndef(value) && !isNull(value))
+            {
+                set(value);
+            }
+        },
+        set = (newValue) =>
+        {
+            if (safeNotEqual(value, newValue))
+            {
+                value = newValue;
+
+                const canRun = !_queue.length;
+
+                for (let sub of subscribers)
+                {
+                    sub[1]();
+                    _queue.push([sub[0], value]);
+                }
+
+                if (canRun)
+                {
+                    store.setItem(name, value);
+
+                    for (let item of _queue)
+                    {
+                        item[0](item[1]);
+                    }
+                    _queue.length = 0;
+                }
+            }
+
+        },
+        update = (fn) =>
+        {
+            if (isFunction(fn))
+            {
+                set(fn(value));
+            }
+        },
+        subscribe = (subscriber, notifier = noop) =>
+        {
+            if (isFunction(subscriber))
+            {
+                const obj = [subscriber, notifier];
+
+                subscribers.add(obj);
+
+                if (subscribers.size === 1)
+                {
+                    stop = init(set) ?? noop;
+                }
+
+                subscriber(value);
+
+                return () =>
+                {
+                    subscribers.delete(obj);
+                    if (0 === subscribers.size && stop)
+                    {
+                        stop();
+                        stop = null;
+                    }
+                };
+
+            }
+
+        },
+        get = (defaultValue = null) =>
+        {
+            let value = store.getItem(name);
+
+
+            if (null === value)
+            {
+                if (isFunction(defaultValue))
+                {
+                    defaultValue = defaultValue();
+
+                    if (defaultValue instanceof Promise)
+                    {
+                        defaultValue.then(newValue => safeSet(newValue));
+                    }
+                    else 
+                    {
+                        safeSet(defaultValue);
+                    }
+                }
+
+
+                return defaultValue;
+
+            }
+
+
+            return value;
+
+        };
+
+    $that = {
+        subscribe, set, update, get
+    };
+    Object.defineProperty($that, 'length', { configurable: true, get: () => subscribers.size });
+    _hooks.get(store).set(name, $that);
+    return $that;
+}
+
+
+
+
+class DataStore
+{
+
+    get type()
+    {
+        return DataStoreType.SYNC;
+    }
+
+    constructor(prefix = '')
+    {
+
+        if (prefix && !prefix.endsWith(SEP$1))
+        {
+            prefix += SEP$1;
+        }
+
+        _prefixes.set(this, prefix);
+        _hooks.set(this, new Map());
+    }
+
+
+    // ---------------- Helper Methods ----------------
+
+
+    static get type()
+    {
+        return this.prototype.type;
+    }
+
+    key(/** @type {string} */name)
+    {
+        return _prefixes.get(this) + name;
+    }
+
+
+
+    // ---------------- Subscriptions ----------------
+
+    subscribe(/** @type {string} */name, /** @type {function} */subscriber, /** @type {function} */ notifier = noop)
+    {
+        return this.hook(name).subscribe(subscriber, notifier);
+    }
+
+
+    // ---------------- Common Methods ----------------
+
+
+    hasItem(/** @type {string} */name)
+    {
+        return this.getItem(name) !== null;
+    }
+
+    removeItem(name)
+    {
+        this.setItem(name, null);
+    }
+
+    setMany(items = {})
+    {
+        const result = new Map();
+        for (let name in items)
+        {
+            const value = items[name];
+            result.set(name, this.setItem(name, value));
+        }
+
+        return result;
+    }
+
+    getMany(keys = [], defaultValue = null)
+    {
+        return keys.map(key => [key, this.getItem(key, defaultValue)]);
+    }
+
+
+    hook(/** @type {string} */name, defaultValue = null)
+    {
+        return GetDataStoreHook(this, name, set =>
+        {
+            set(this.getItem(name, defaultValue));
+
+        });
+    }
+
+
+    clear()
+    {
+
+        const keys = this.keys;
+
+        for (let key of keys)
+        {
+            this.removeItem(key);
+        }
+
+        return keys;
+    }
+
+
+
+    // ---------------- Abstract Methods ----------------
+
+
+    get keys()
+    {
+        throw new Error(getClass(this) + '.keys not implemented.');
+    }
+
+
+
+    getItem(/** @type {string} */name, defaultValue = null)
+    {
+
+        if (isFunction(defaultValue))
+        {
+
+            defaultValue = defaultValue();
+            if (defaultValue instanceof Promise)
+            {
+                defaultValue.then(value => this.setItem(name, value));
+            }
+            else
+            {
+                this.setItem(name, defaultValue);
+            }
+
+        }
+
+        return defaultValue;
+    }
+
+    setItem(/** @type {string} */name, value)
+    {
+        throw new Error(getClass(this) + '.setItem() not implemented.');
+    }
+}
+
+/**
+ * LocalStorage Stubs for SSR
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/Storage/key
+ */
+
+
+if (typeof Storage === "undefined")
+{
+
+
+    const Data = new Map();
+
+    class Storage
+    {
+        get length()
+        {
+            return Data.size;
+        }
+
+        key(index)
+        {
+            return [...Data.keys()][index] ?? null;
+
+        }
+
+        clear()
+        {
+            Data.clear();
+        }
+
+        getItem(keyName)
+        {
+            return Data.get(keyName) ?? null;
+        }
+        setItem(keyName, keyValue)
+        {
+            Data.set(String(keyName), String(keyValue));
+        }
+
+        getItem(keyName)
+        {
+            return Data.get(keyName) ?? null;
+        }
+
+        removeItem(keyName)
+        {
+            Data.delete(keyName);
+        }
+    }
+
+    globalThis.Storage ??= Storage;
+    globalThis.localStorage ??= new Storage();
+    globalThis.sessionStorage ??= new Storage();
+
+    globalThis.addEventListener ??= () => { };
+    globalThis.removeEventListener ??= () => { };
+}
+
+const VENDOR_KEY = 'NGSOFT:UUID', SEP = ':';
+
+
+function getDefaultPrefix()
+{
+
+    let prefix = '';
+
+
+    if (!IS_UNSAFE)
+    {
+        return prefix;
+    }
+
+    if (null === (prefix = localStorage.getItem(VENDOR_KEY)))
+    {
+        localStorage.setItem(VENDOR_KEY, prefix = uuidv4() + SEP);
+    }
+
+    return prefix;
+}
+
+
+
+
+class WebStore extends DataStore
+{
+
+
+    #store;
+
+    get store()
+    {
+        return this.#store;
+    }
+
+
+    constructor( /** @type {Storage} */   storage, prefix = getDefaultPrefix())
+    {
+
+        storage ??= localStorage;
+        if (storage instanceof Storage === false)
+        {
+            throw new TypeError('storage not an instance of Storage');
+        }
+        super(prefix);
+        this.#store = storage;
+    }
+
+    get keys()
+    {
+
+        const result = [], prefix = this.key(''), { store } = this;
+
+        for (let i = 0; i < store.length; i++)
+        {
+
+            let key = store.key(i);
+            if (key.startsWith(prefix))
+            {
+                result.push(key.slice(prefix.length));
+            }
+
+        }
+
+        return result;
+    }
+
+
+
+    getItem(/** @type {string} */name, defaultValue = null)
+    {
+
+        let value = this.store.getItem(this.key(name));
+
+        if (!isString(value))
+        {
+            return super.getItem(name, defaultValue);
+        }
+
+        return super.getItem(name, decode(value));
+    }
+
+    setItem(/** @type {string} */name, value)
+    {
+
+        if (value === null)
+        {
+            this.store.removeItem(this.key(name));
+        }
+        else
+        {
+            this.store.setItem(this.key(name), encode(value));
+        }
+
+        return value;
+    }
+
+
+
+    hook(/** @type {string} */name, defaultValue = null)
+    {
+        return GetDataStoreHook(this, name, set =>
+        {
+
+            const listener = e =>
+            {
+
+                if (e.storageArea === this.store)
+                {
+                    if (e.key === this.key(name))
+                    {
+                        set(decode(e.newValue));
+                    }
+                }
+            };
+
+
+            addEventListener('storage', listener);
+
+            set(this.getItem(name, defaultValue));
+
+            return () =>
+            {
+                removeEventListener('storage', listener);
+
+            };
+
+        });
+
+    }
+
+}
+
+
+const LocalStore = new WebStore(); new WebStore(sessionStorage);
+
+const loaded = new Set();
+
+
+
+
+function onLoaded(el, fn)
+{
+    if (isFunction(fn))
+    {
+
+        if (loaded.has(el))
+        {
+            fn(el);
+        }
+        else if (el.readyState >= 2)
+        {
+            loaded.add(el);
+            fn(el);
+        } else
+        {
+            el.addEventListener('canplay', () =>
+            {
+                loaded.add(el);
+                fn(el);
+            });
+        }
+    }
+}
+
+
+
+function playAudio(el)
+{
+    return new Promise((resolve, reject) =>
+    {
+
+
+        if (isElement(el))
+        {
+
+            onLoaded(el, () =>
+            {
+                el.currentTime = 0;
+
+                setTimeout(() =>
+                {
+                    resolve(el);
+                }, (el.duration * 1000) + 20);
+
+                if (el.paused && !el.muted)
+                {
+                    try
+                    {
+                        el.play();
+                    } catch (err)
+                    {
+
+                    }
+                }
+            });
+
+        } else
+        {
+            reject(new TypeError("not an element"));
+        }
+
+
+    });
+}
+
+
+
+const muted = LocalStore.hook('muted', false);
+
+
+
+const
+    EXT = '.ogg',
+    players = new Map(),
+    target = document.querySelector('#audioplayers');
+
+
+
+
+class AudioEnum extends BackedEnum
+{
+    constructor(value)
+    {
+        super(value);
+        this.load();
+    }
+
+    static pauseAll()
+    {
+        this.cases().forEach(x => x.pause());
+    }
+
+    get url()
+    {
+        throw new Error(getClass(this) + '.url not implemented.');
+    }
+
+
+    set player(el)
+    {
+        players.set(this, el);
+        muted.subscribe(value =>
+        {
+            el.muted = value ? value : null;
+        });
+    }
+
+
+    get player()
+    {
+        return players.get(this);
+    }
+
+
+    play()
+    {
+        this.load();
+        return playAudio(this.player);
+    }
+
+    pause()
+    {
+        this.player?.pause();
+    }
+
+    destroy()
+    {
+        if (this.player)
+        {
+            this.pause();
+            target.removeChild(this.player);
+            players.delete(this);
+        }
+
+    }
+
+
+    load()
+    {
+
+        if (!this.player)
+        {
+
+            const elem = createElement('audio', {
+                src: this.url
+            });
+
+
+            target.appendChild(elem);
+            this.player = elem;
+        }
+    }
+}
+
+
+
+class SoundTrack extends AudioEnum
+{
+
+    static Stage1 = new SoundTrack(1);
+    static Stage2 = new SoundTrack(2);
+    static Stage3 = new SoundTrack(3);
+    static Stage4 = new SoundTrack(4);
+    static Stage5 = new SoundTrack(5);
+    static Stage6 = new SoundTrack(6);
+    static Stage7 = new SoundTrack(7);
+    static Stage8 = new SoundTrack(8);
+
+
+
+    get url()
+    {
+        return getUrl(SOUNDS + '/soundtrack/' + this.value + EXT);
+    }
+
+
+}
+
+
+class SoundEffect extends AudioEnum
+{
+
+
+    static DEATH = new SoundEffect('death');
+    static DROP = new SoundEffect('drop');
+    static HIT = new SoundEffect('hit');
+    static JUMP = new SoundEffect('jump');
+    static LEVEL = new SoundEffect('level');
+    static SLASH = new SoundEffect('slash');
+    static BEHEADING = new SoundEffect('beheading');
+
+
+    get url()
+    {
+        return getUrl(SOUNDS + '/effects/' + this.value + EXT);
+    }
+
+}
+
+let loading = 0;
+
+const listeners = new Set();
+
+
+function createLoader(fn = noop)
+{
+
+    let count = 0;
+
+    return (elem) =>
+    {
+        count++;
+        loading++;
+
+        elem.onload = () =>
+        {
+            count--;
+            loading--;
+            if (count === 0)
+            {
+                fn();
+                if (loading === 0)
+                {
+                    listeners.forEach(fn => fn());
+                }
+            }
+        };
+    };
+
+}
+
+const imageLoader = createLoader();
+
+
+function animate(sprites, loop = true)
+{
+    let
+        index = 0,
+        counter = 0;
+
+
+    const images = sprites.map(src =>
+    {
+        const img = new Image();
+        imageLoader(img);
+        img.src = src;
+        return img;
+    });
+
+
+    return () =>
+    {
+
+        // ends animation with a false
+        let flag = true;
+
+        counter++;
+
+        if ((counter % 8) === 0)
+        {
+            index++;
+        }
+
+
+        if (index >= images.length)
+        {
+            index = 0;
+            flag = loop;
+        }
+
+
+        return flag && images[index];
+    };
+
+}
+
+
+
+
+const STATES$2 = new Map([
+    [
+        'moving', [
+            // sprites
+            [...Array(9)].map((_, n) => HERO + '/moving/' + (n + 1) + '.png'),
+
+            //can loop
+            true
+        ]
+
+    ],
+    [
+        'attacking', [
+            [...Array(6)].map((_, n) => HERO + '/attacking/' + (n + 1) + '.png'),
+            // cannot loop
+            false
+        ]
+    ],
+
+    [
+        'dead', [
+            [...Array(10)].map((_, n) => HERO + '/dead/' + (n + 1) + '.png'),
+            // cannot loop
+            false
+        ]
+    ],
+]);
+
+
+
+class HiroStates extends BackedEnum
+{
+    static MOVING = new HiroStates('moving');
+    static ATTACKING = new HiroStates('attacking');
+    static DEAD = new HiroStates('dead');
+
+
+    get sprites()
+    {
+        return STATES$2.get(this.value)[0];
+    }
+
+    #animation;
+
+    getAnimation()
+    {
+        return this.#animation ??= animate(...STATES$2.get(this.value));
+    }
+}
+
+
+
+
+class Hiro extends GameObject
+{
+
+    maxHP = 6;
+    hp = 6; //à définir 
+
+    killCount = 0;
+
+    // box
+    x = 100;
+    y = 350;
+    width = 150;
+    height = 150;
+
+    // jump limits
+    minY = 150;
+    maxY = 350;
+
+    // jump strength (in px)
+    gravity = 1;
+    jumpStep = 10;
+    deltaY = 0;
+
+    // state jumping
+    isJumping = false;
+
+    // state attacking
+    isAttacking = false;
+
+
+    //state dead
+    isDead = false;
+
+    // points to the character state
+    state = HiroStates.MOVING;
+
+
+    // points to the current sprite (false sets state to moving)
+    currentSprite = false;
+
+    // hero can intercepts object one time
+    intercepting = [];
+
+
+
+    draw()
+    {
+        const { ctx } = this;
+
+
+        if (this.isJumping)
+        {
+            this.jump();
+        }
+
+        if (this.isAttacking)
+        {
+            this.attack();
+        }
+
+        // no else as attacking state can be changed
+        if (!this.isAttacking)
+        {
+            this.move();
+        }
+
+        // checks intersections
+        this.intersections();
+
+        if (this.isDead)
+        {
+            this.dead();
+        }
+
+        //prevents draw error on death
+        if (this.currentSprite)
+        {
+            ctx.drawImage(this.currentSprite,
+                this.x, this.y,
+                this.width, this.height
+            );
+
+        }
+
+
+    }
+
+
+    dead()
+    {
+
+        if (!this.isDead)
+        {
+            return;
+        }
+        this.state = HiroStates.DEAD;
+
+
+
+        if (false === (this.currentSprite = this.state.getAnimation(this)()))
+        {
+            this.world.pause();
+            this.world.trigger('dead', { item: this });
+        }
+
+
+
+    }
+
+
+
+    move()
+    {
+        this.state = HiroStates.MOVING;
+        this.currentSprite = this.state.getAnimation(this)();
+    }
+
+    attack()
+    {
+
+        if (this.isAttacking)
+        {
+
+            this.state = HiroStates.ATTACKING;
+            if (false === (this.currentSprite = this.state.getAnimation(this)()))
+            {
+                this.isAttacking = false;
+            }
+
+        }
+
+        // no else as it can be unset
+        if (!this.isAttacking)
+        {
+            this.state = HiroStates.MOVING;
+            this.move();
+        }
+
+    }
+
+
+
+    jump()
+    {
+
+        if (!this.isJumping)
+        {
+            return;
+        }
+        // jumping up
+        if (this.deltaY === 0)
+        {
+            this.deltaY = - (this.jumpStep * this.gravity);
+        }
+        // jump up => down
+        else if (this.y <= this.minY)
+        {
+            this.deltaY = -1 * this.deltaY;
+            this.y = this.minY;
+
+        }
+        // jumping down
+        else if (this.y >= this.maxY)
+        {
+            this.deltaY = 0;
+            this.isJumping = false;
+            this.y = this.maxY;
+            return;
+        }
+
+        this.y += this.deltaY;
+    }
+
+
+
+    intersections()
+    {
+
+
+        // clears unique intercepts
+        this.intercepting = this.intercepting.filter(item =>
+        {
+
+
+            if (item.destroyed || !item.isIntersecting(this))
+            {
+                return false;
+            }
+
+            return true;
+        });
+
+
+        // copying as it can be destroyed
+        for (let item of [...this.world.objects])
+        {
+
+
+            if (item.isIntersecting(this) && !this.intercepting.includes(item))
+            {
+
+                if (item.scoreGain > 0)
+                {
+
+                    this.intercepting.push(item);
+
+                    if (!item.isEnemy || this.isAttacking)
+                    {
+                        this.world.score += item.scoreGain;
+
+                        this.world.destroyObject(item);
+                        if (item instanceof Loot)
+                        {
+                            SoundEffect.DROP.play();
+                        }
+
+                        // generate a new enemy
+                        if (item.isEnemy)
+                        {
+                            SoundEffect.BEHEADING.play();
+                            this.killCount++;
+                            // this.world.stage.generateEnemy();
+                        }
+
+
+                        // do something to the item (animation and destroy)
+                        this.world.trigger('scoregain', { item });
+
+
+                    }
+                    // lose hp
+                    else if (item.isEnemy)
+                    {
+
+                        this.hp--;
+                        this.world.trigger('hploss', { item });
+                        if (this.hp <= 0)
+                        {
+                            SoundEffect.pauseAll();
+                            SoundEffect.DEATH.play();
+                            this.isDead = true;
+                        } else
+                        {
+                            SoundEffect.HIT.play();
+                        }
+
+                    }
+                }
+
+
+            }
+
+
+
+        }
+
+
+
+    }
+
+
+
+}
+
+let api = {
+
+    set(elem, attr, value)
+    {
+        if (nullUndef.includes(value))
+        {
+            this.remove(elem, attr);
+        }
+
+        getAttrs(attr).forEach(x =>
+        {
+            elem.dataset[x] = encode(value);
+        });
+    },
+    get(elem, attr, fallback = null)
+    {
+        let result = getAttrs(attr).map(x => decode(elem.dataset[x])).map(x => !nullUndef.includes(x) ? x : fallback);
+
+        if (result.length <= 1)
+        {
+            return result[0] ?? fallback;
+        }
+
+        return result;
+    },
+    remove(elem, attr)
+    {
+        getAttrs(attr).forEach(x => delete elem.dataset[x]);
+    }
+
+
+}, undef, nullUndef = [null, undef];
+
+
+
+function getAttrs(attr)
+{
+    let result = [];
+
+    if (isString(attr))
+    {
+        if (attr.startsWith('data-'))
+        {
+            attr = attr.slice(5);
+        }
+        result = [toCamel(attr)];
+    }
+
+
+    if (isArray(attr))
+    {
+        result = result.concat(...attr.map(x => getAttrs(x)));
+    }
+
+    return result;
+}
+
+
+
+
+function getElem(elem)
+{
+    if (hasDataset(elem))
+    {
+        return [elem];
+    }
+
+    if (elem instanceof NodeList)
+    {
+        return [...elem];
+    }
+
+    if (isArray(elem))
+    {
+        return elem.filter(x => hasDataset(x));
+    }
+
+    return isValidSelector(elem) ? [...document.querySelectorAll(elem)] : [];
+}
+
+function hasDataset(elem)
+{
+    return elem instanceof Object && elem.dataset instanceof DOMStringMap;
+}
+
+
+
+
+
+/**
+ * data-attribute reader/setter
+ * @param {Node|NodeList|String} elem 
+ * @param {String} attr 
+ * @param {Any} [value]
+ */
+function dataset(elem, attr, value)
+{
+
+    elem = getElem(elem);
+
+
+    function get(attr, fallback = null)
+    {
+
+        let x = elem[0];
+        if (hasDataset(x))
+        {
+            return api.get(x, attr, fallback);
+        }
+
+        return fallback;
+    }
+
+
+    function set(attr, value)
+    {
+        if (isPlainObject(attr))
+        {
+
+            for (let key in attr)
+            {
+                set(key, attr[key]);
+            }
+        }
+        else
+        {
+            elem.forEach(x => api.set(x, attr, value));
+        }
+
+        return $this;
+
+    }
+
+
+    function remove(attr)
+    {
+        elem.forEach(x => api.remove(x, attr));
+        return $this;
+    }
+
+
+    const $this = { get, set, remove };
+
+    switch (arguments.length)
+    {
+        case 2:
+            return get(attr);
+
+        case 3:
+            return set(attr, value);
+
+    }
+
+    return $this;
+
+}
+
+const SPRITES = [
+    [...Array(9)].map((_, n) => ENEMY + '/cyclops/' + (n + 1) + '.png'),
+    [...Array(9)].map((_, n) => ENEMY + '/minos/' + (n + 1) + '.png'),
+    [...Array(9)].map((_, n) => ENEMY + '/wherewolf/' + (n + 1) + '.png'),
+    [...Array(9)].map((_, n) => ENEMY + '/orc/' + (n + 1) + '.png'),
+
+];
+
+
+const STATES$1 = new Map([
+    [
+        'moving', [
+            // sprites
+            [...Array(9)].map((_, n) => ENEMY + '/demon/moving/' + (n + 1) + '.png'),
+
+            //can loop
+            true
+        ]
+
+    ]
+
+]);
+
+
+const animationMoving = new Map();
+
+
+class DemonState extends BackedEnum
+{
+    static MOVING = new DemonState('moving');
+
+
+    get sprites()
+    {
+        return STATES$1.get(this.value)[0];
+    }
+
+
+
+    getAnimation(instance)
+    {
+
+        if (!animationMoving.has(instance))
+        {
+            animationMoving.set(instance, animate(instance.sprites));
+        }
+        return animationMoving.get(instance);
+    }
+}
+
+
+
+class Demon extends GameObject
+{
+
+
+    isEnemy = true;
+    isDead = false;
+
+    #points;
+    // gain score when intersecting non ennemy object || intersecting ennemy + attacking
+    get scoreGain()
+    {
+        return this.#points ??= Math.ceil(Math.random() * 500);
+    }
+
+    // GameObject implementation
+
+
+    get width()
+    {
+        return this.world.hero.width;
+    }
+
+    get height()
+    {
+        return this.world.hero.height;
+    }
+
+
+    get y()
+    {
+        return this.world.hero.maxY;
+    }
+
+    set y(value)
+    {
+        //noop
+    }
+
+    // end of the map
+    #x;
+    get x()
+    {
+        return this.#x ??= this.world.width + Math.floor(Math.random() * this.world.width * Math.ceil(Math.random() * 3));
+    }
+
+    set x(value)
+    {
+        this.#x = value;
+    }
+
+
+    #sprites;
+
+    get sprites()
+    {
+        return this.#sprites ??= SPRITES[Math.floor(Math.random() * SPRITES.length)];
+    }
+
+    // demon state
+    state = DemonState.MOVING;
+
+
+    // points to the current sprite (false sets state to moving)
+    currentSprite = false;
+
+
+
+
+    draw()
+    {
+
+        const { ctx } = this;
+
+        this.move();
+
+
+        // don't draw it out of the canvas
+        if (this.x > this.world.width - this.width)
+        {
+            return;
+        }
+
+
+
+        ctx.drawImage(this.currentSprite,
+            this.x, this.y,
+            this.width, this.height
+        );
+
+    }
+
+
+
+    move()
+    {
+
+        this.state = DemonState.MOVING;
+
+
+        // move with the stage
+        if (!this.world.hero.isDead)
+        {
+            this.currentSprite = this.state.getAnimation(this)();
+            this.x -= this.world.stage.speed;
+        }
+
+
+
+        if (this.x <= 0)
+        {
+            this.#x = null;
+        }
+
+    }
+
+
+    destroy()
+    {
+
+        super.destroy();
+
+        this.isDead = true;
+    }
+
+
+}
+
+const loader = createLoader();
+
+function loadPicture(src)
+{
+    const elem = new Image();
+    loader(elem);
+    elem.src = src;
+    return elem;
+}
+
+
+const
+    STAGES = [...Array(8)].map((_, n) => WORLDS + '/stage' + (n + 1) + '.png'),
+    PICTURES = STAGES.map(loadPicture);
+
+
+
+
+
+class Stage extends GameObject
+{
+
+
+    // STAGES[level]
+
+    #level = 0;
+
+    get level()
+    {
+        return this.#level;
+    }
+
+    set level(value)
+    {
+        this.#level = value;
+        dataset(this.canvas, 'stage', this.stage);
+        this.reset();
+        this.world.trigger('levelchange');
+    }
+
+    enemies = 0;
+    enemiesPerStageRatio = 8;
+
+
+    get soundtrack()
+    {
+        return SoundTrack.cases()[this.level];
+    }
+
+    get maxEnemies()
+    {
+        return this.stage * this.enemiesPerStageRatio;
+    }
+
+    get stage()
+    {
+        return this.level + 1;
+    }
+
+    // number of loops n * (deltaX === width)
+    loops = 0;
+
+    loopIncreased = false;
+
+
+    // max loops before clearing stage
+    get maxLoops()
+    {
+
+        return this.world.loopsToClearStage;
+    }
+
+
+    speed = 8;
+    deltaX = 0;
+
+
+    // GameObject implementation
+
+    x = 0;
+    y = 0;
+
+    get width()
+    {
+        return this.world.width;
+    }
+
+    get height()
+    {
+        return this.world.height;
+    }
+
+
+    get picture()
+    {
+        return STAGES[this.level] ?? STAGES.slice(-1)[0];
+    }
+
+
+    get decor()
+    {
+
+        return PICTURES[this.level] ?? PICTURES.slice(-1)[0];
+    }
+
+    get canvas()
+    {
+        return this.world.canvas;
+    }
+
+
+
+
+    reset()
+    {
+        this.enemies = this.deltaX = this.loops = 0;
+        this.loopIncreased = false;
+        this.world.objects.length = 0;
+        this.canvas.style = '';
+    }
+
+    draw()
+    {
+
+        this.generateEnemies();
+
+        const { canvas } = this;
+
+        if (!this.world.hero.isDead)
+        {
+            this.deltaX += this.speed;
+        }
+
+        if (this.deltaX >= this.width)
+        {
+            this.deltaX = 0;
+            this.loops++;
+            this.loopIncreased = true;
+
+
+            if (this.loops >= this.maxLoops)
+            {
+                this.world.pause();
+                this.world.trigger('stagecleared');
+            }
+
+
+        }
+
+        // using background as it says there: 
+        // https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Optimizing_canvas
+        canvas.style.backgroundPositionX = `-${this.deltaX}px`;
+    }
+
+
+
+    generateEnemy()
+    {
+        if (this.enemies < this.maxEnemies)
+        {
+            this.world.objects.push(new Demon(this.world));
+            this.world.objects.push(new Loot(this.world));
+            this.enemies++;
+        }
+
+    }
+
+
+    generateEnemies()
+    {
+        if (this.enemies === 0 || this.loopIncreased)
+        {
+            if (this.loopIncreased)
+            {
+                this.loopIncreased = false;
+            }
+
+            if (this.enemies < this.maxEnemies)
+            {
+                this.generateEnemy();
+            }
+        }
+    }
+
+
+    constructor(world)
+    {
+        super(world);
+        world
+            .on('started resume levelchange', () =>
+            {
+                SoundTrack.pauseAll();
+                this.soundtrack.play();
+            })
+            .on('paused stagecleared', () =>
+            {
+                this.soundtrack.pause();
+            });
+
+
+    }
+}
+
+function getListenersForEvent(listeners, type)
+{
+    return listeners.filter(item => item.type === type);
+}
+
+
+class EventManager
+{
+
+    #listeners;
+    #useasync;
+
+    get length()
+    {
+        return this.#listeners.length;
+    }
+
+    constructor(useasync = true)
+    {
+        this.#listeners = [];
+        this.#useasync = useasync === true;
+    }
+
+
+    on(type, listener, once = false)
+    {
+
+        if (!isString(type))
+        {
+            throw new TypeError('Invalid event type, not a String.');
+        }
+
+        if (!isFunction(listener))
+        {
+            throw new TypeError('Invalid listener, not a function');
+        }
+
+
+
+        type.split(/\s+/).forEach(type =>
+        {
+            this.#listeners.push({
+                type, listener, once: once === true,
+            });
+        });
+
+        return this;
+    }
+
+
+    one(type, listener)
+    {
+        return this.on(type, listener, true);
+    }
+
+
+    off(type, listener)
+    {
+
+        if (!isString(type))
+        {
+            throw new TypeError('Invalid event type, not a String.');
+        }
+
+        type.split(/\s+/).forEach(type =>
+        {
+
+            this.#listeners = this.#listeners.filter(item =>
+            {
+                if (type === item.type)
+                {
+                    if (listener === item.listener || !listener)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        });
+        return this;
+    }
+
+
+    trigger(type, data = null, async = null)
+    {
+
+        let event;
+
+        async ??= this.#useasync;
+
+        if (type instanceof Event)
+        {
+            event = type;
+            event.data ??= data;
+            type = event.type;
+        }
+
+        if (!isString(type) && type instanceof Event === false)
+        {
+            throw new TypeError('Invalid event type, not a String|Event.');
+        }
+
+
+        const types = [];
+
+        type.split(/\s+/).forEach(type =>
+        {
+
+            if (types.includes(type))
+            {
+                return;
+            }
+
+            types.push(type);
+
+            for (let item of getListenersForEvent(this.#listeners, type))
+            {
+
+                if (item.type === type)
+                {
+
+                    if (async)
+                    {
+                        runAsync(item.listener, event ?? { type, data });
+
+                    } else
+                    {
+                        item.listener(event ?? { type, data });
+                    }
+
+                    if (item.once)
+                    {
+                        this.off(type, item.listener);
+                    }
+                }
+            }
+
+
+        });
+
+        return this;
+
+
+    }
+
+
+    mixin(binding)
+    {
+
+        if (binding instanceof Object)
+        {
+            ['on', 'off', 'one', 'trigger'].forEach(method =>
+            {
+                Object.defineProperty(binding, method, {
+                    enumerable: false, configurable: true,
+                    value: (...args) =>
+                    {
+                        this[method](...args);
+                        return binding;
+                    }
+                });
+            });
+
+        }
+
+        return this;
+    }
+
+
+    static mixin(binding, useasync = true)
+    {
+        return (new EventManager(useasync)).mixin(binding);
+    }
+
+    static on(type, listener, once = false)
+    {
+
+        return instance.on(type, listener, once);
+    }
+
+    static one(type, listener)
+    {
+
+        return instance.one(type, listener);
+    }
+
+    static off(type, listener)
+    {
+
+        return instance.off(type, listener);
+    }
+
+    static trigger(type, data = null, async = null)
+    {
+
+        return instance.trigger(type, data, async);
+    }
+
+}
+
+
+
+const instance = new EventManager();
+
+let init = false;
+
+
+class GameWorld
+{
+
+
+    element;
+    paused = true;
+    timeout = null;
+
+    score = 0;
+
+    // ~30 secs
+    loopsToClearStage = 15;
+
+    objects = [];
+
+    get ctx()
+    {
+        return this.canvas.getContext('2d');
+    }
+
+
+    get width()
+    {
+        return decode(this.canvas.width);
+    }
+
+
+    get height()
+    {
+        return decode(this.canvas.height);
+    }
+
+
+    get time()
+    {
+        const reader = TimeReader.of(this.chrono.elapsed);
+        return (reader.hours > 0 ? reader.hours + ':' : '') + reader.minutes + ':' + reader.seconds;
+    }
+
+
+    constructor({ element } = {})
+    {
+
+        EventManager.mixin(this, false);
+
+        this.element = element;
+        this.chrono = new Chronometer(false);
+        this.displayScore = element.querySelector('#score');
+        this.displayTime = element.querySelector('#time');
+        this.displayHP = element.querySelector('#lives');
+        this.displayKill = element.querySelector('.killed-span');
+        this.displayHeart = element.querySelector('.heart-span');
+        this.canvas = element.querySelector('canvas');
+
+
+
+    }
+
+
+    destroy()
+    {
+        this.pause();
+        init = false;
+
+        this.objects.forEach(obj => obj.destroy());
+
+        requestAnimationFrame(() => this.clearScreen());
+
+    }
+
+
+    /**
+     * Destroy a game object and prevent it from being drawn
+     */
+    destroyObject(gameobject)
+    {
+        if (gameobject instanceof GameObject)
+        {
+
+            let index = this.objects.indexOf(gameobject);
+            if (index > -1)
+            {
+                gameobject.destroy();
+                this.objects.splice(index, 1);
+            }
+
+        }
+    }
+
+
+    init()
+    {
+        if (!init)
+        {
+            this.stage = new Stage(this);
+            this.hero = new Hiro(this);
+            this.objects.length = 0;
+            this.stage.level = 0;
+            this.resume();
+        }
+
+    }
+
+
+
+    pause()
+    {
+
+        if (!this.paused)
+        {
+            this.paused = true;
+            this.chrono.pause();
+            if (this.timeout)
+            {
+                // clearTimeout(this.timeout);
+                cancelAnimationFrame(this.timeout);
+                this.timeout = null;
+            }
+
+            this.trigger('paused');
+        }
+
+    }
+
+
+    resume()
+    {
+
+        if (this.paused)
+        {
+            this.paused = false;
+            if (this.chrono.stopped)
+            {
+                this.chrono.start();
+                this.trigger('started');
+            } else
+            {
+                this.chrono.resume();
+                this.trigger('resume');
+            }
+            requestAnimationFrame(() => this.draw());
+
+        }
+
+
+    }
+
+
+
+    clearScreen()
+    {
+        // clears ouput before redrawing
+        this.ctx.clearRect(0, 0, this.width, this.height);
+    }
+
+
+    draw()
+    {
+
+        if (this.paused)
+        {
+            return;
+        }
+
+
+        const { displayScore, displayTime, displayHP, displayKill, displayHeart } = this;
+
+
+        this.clearScreen();
+
+
+        // draw first
+        this.stage.draw();
+
+        // draw other objects (enemies)
+        this.objects.forEach(obj => obj.draw());
+
+        // draw last
+        this.hero.draw();
+
+        // this is generated after as score can change when drawing
+        displayScore.innerHTML = this.score;
+        displayTime.innerHTML = this.time;
+
+        dataset(displayHP, 'lives', this.hero.hp);
+
+        displayHeart.innerHTML = this.hero.hp;
+
+        displayKill.innerHTML = this.hero.killCount;
+
+
+
+
+        // real 60-90 fps (faster than timeout)
+        this.timeout = requestAnimationFrame(() => this.draw());
+
+
+        // this.timeout = setTimeout(() =>
+        // {
+        //     requestAnimationFrame(() => this.draw());
+        // }, 16); // ~60 fps
+    }
+}
+
+/**
+ * SCSS Style
+ */
+
+const
+    menu = document.querySelector('.start-menu'),
+    death = document.querySelector('.death-container'),
+    levelup = document.querySelector('.level'),
+    victory = document.querySelector('.victory'),
+    pause = document.querySelector('.pause'),
+    credits = document.querySelector('.credits'),
+    goty = document.querySelector('#goty');
+
+
+
+
+
+// init game engine
+let world;
+
+// listen to keyboard events
+addEventListener('keydown', e =>
+{
+
+    const { key } = e;
+
+    // space key
+    if (key === ' ')
+    {
+        if (world.paused)
+        {
+            return;
+        }
+
+        e.preventDefault();
+        if (!world.hero.isJumping)
+        {
+            world.hero.isJumping = true;
+            SoundEffect.JUMP.play();
+        }
+    }
+    // pause key
+    else if (key === 'p')
+    {
+        e.preventDefault();
+        if (!world.paused)
+        {
+            world.pause();
+        } else
+        {
+            world.resume();
+        }
+    }
+
+    // atttttackk !!!
+
+    else if (key === "e")
+    {
+        if (world.paused)
+        {
+            return;
+        }
+
+        e.preventDefault();
+
+        if (!world.hero.isAttacking)
+        {
+            SoundEffect.SLASH.play();
+            world.hero.isAttacking = true;
+        }
+
+    }
+
+
+
+
+});
+
+
+addEventListener('click', ({ target }) =>
+{
+
+    if (!world)
+    {
+        return;
+    }
+    if (world.paused)
+    {
+        return;
+    }
+
+    if (target.closest('#game') && !world.hero.isAttacking)
+    {
+        SoundEffect.SLASH.play();
+        world.hero.isAttacking = true;
+    }
+
+
+});
+
+
+
+
+
+menu.addEventListener('click', e =>
+{
+
+    const { target } = e;
+    if (target.closest('.start-menu-btn'))
+    {
+        world = new GameWorld({
+            element: document.querySelector('#game')
+        });
+
+
+        world.on('paused', () =>
+        {
+            pause.hidden = null;
+        }).on('resume started', () =>
+        {
+            pause.hidden = true;
+        }).on('stagecleared', () =>
+        {
+            pause.hidden = true;
+
+            if (world.stage.stage === 8)
+            {
+                SoundEffect.pauseAll();
+                SoundEffect.LEVEL.play();
+                victory.querySelector('.score-span').innerHTML = world.score;
+                victory.querySelector('.time-span').innerHTML = world.time;
+                victory.querySelector('.killed-span').innerHTML = world.hero.killCount;
+                victory.hidden = null;
+            }
+            else
+            {
+
+
+                const { hero } = world;
+
+                const before = { hp: hero.hp, score: world.score };
+
+                while (hero.hp < hero.maxHP)
+                {
+                    if (world.score >= 1000)
+                    {
+                        world.score -= 1000;
+                        hero.hp++;
+                    } else
+                    {
+                        break;
+                    }
+                }
+
+                levelup.querySelector('.score .before').innerHTML = before.score;
+                levelup.querySelector('.lives .before').innerHTML = before.hp;
+
+                levelup.querySelector('.score .diff').innerHTML = Math.abs(before.score - world.score);
+                levelup.querySelector('.lives .diff').innerHTML = Math.abs(hero.hp - before.hp);
+
+                levelup.querySelector('.score .current').innerHTML = world.score;
+                levelup.querySelector('.lives .current').innerHTML = hero.hp;
+
+                levelup.hidden = null;
+                SoundEffect.pauseAll();
+                SoundEffect.LEVEL.play().then(() =>
+                {
+                    levelup.hidden = true;
+                    world.stage.level++;
+                });
+            }
+
+
+        }).on('dead', () =>
+        {
+
+            death.querySelector('.score-span').innerHTML = world.score;
+            death.querySelector('.time-span').innerHTML = world.time;
+            death.querySelector('.killed-span').innerHTML = world.hero.killCount;
+            pause.hidden = true;
+            death.hidden = null;
+
+        }).on('levelchange', () =>
+        {
+            world.resume();
+        });
+
+
+        menu.hidden = true;
+        goty.hidden = true;
+
+        world.init();
+
+
+
+    } else if (target.closest('.start-menu-credit'))
+    {
+        credits.hidden = null;
+    }
+
+});
+
+
+credits.addEventListener("click", () =>
+{
+    credits.hidden = true;
+});
+
+
+pause.addEventListener("click", ({ target }) =>
+{
+    if (target.closest('.ctn-img'))
+    {
+        world.resume();
+
+    }
+});
+
+death.addEventListener("click", ({ target }) =>
+{
+    if (target.closest(".retry"))
+    {
+
+        death.hidden = true;
+        world.destroy();
+        menu.hidden = null;
+        goty.hidden = null;
+
+
+    }
+});
+
+victory.addEventListener("click", () =>
+{
+    victory.hidden = true;
+    world?.destroy();
+    menu.hidden = null;
+    goty.hidden = null;
+});
+//# sourceMappingURL=main.js.map

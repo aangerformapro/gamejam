@@ -1,1 +1,443 @@
-*,:after,:before{box-sizing:border-box;margin:0;padding:0}[hidden]{display:none!important}html{font-size:16px;line-height:1.2;scroll-behavior:smooth}body{align-items:center;background-color:#333;display:flex;flex-direction:column;font-family:AmazDooMLeft2,sans-serif;justify-content:center;min-height:100vh}#game{position:relative;-webkit-user-select:none;-moz-user-select:none;user-select:none}#game-world{background:#000;margin:0 auto;position:relative;z-index:1}#audioplayers{position:fixed;right:500vw;top:-500vh;z-index:-1000}.data{align-items:center;display:flex;font-family:AmazDooMLeftOutline,sans-serif;justify-content:space-between;padding:8px;position:absolute;top:0;-webkit-user-select:none;-moz-user-select:none;user-select:none;width:100%;z-index:2}.data .time{color:red;font-family:Times New Roman,serif}.data .score,.data .time{font-family:AmazDooMLeft2,sans-serif;font-size:32px;letter-spacing:10px;text-shadow:6px 6px 5px #000;text-transform:uppercase}.data .score{color:rgba(0,255,0,.745)}.data #lives{background-position:50%;background-size:contain;height:80px;left:calc(50% - 50px);position:absolute;top:-16px;width:80px}.data #lives[data-lives]{background-image:url(pictures/ui/hp/1.png)}.data #lives[data-lives="4"]{background-image:url(pictures/ui/hp/2.png)}.data #lives[data-lives="3"]{background-image:url(pictures/ui/hp/3.png)}.data #lives[data-lives="2"]{background-image:url(pictures/ui/hp/4.png)}.data #lives[data-lives="0"],.data #lives[data-lives="1"]{background-image:url(pictures/ui/hp/5.png)}.death-container{align-items:center;-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);bottom:0;display:flex;flex-direction:column;height:540px;justify-content:space-around;left:0;opacity:1;position:absolute;right:0;top:0;width:960px;z-index:4}.death-container .death-image{background:url(assets/pictures/ui/menu/DeadText.png);height:180px;margin-top:200px;width:480px}.death-container .data{display:flex;justify-content:space-around;letter-spacing:5px;margin-top:50px}.death-container .data .score{font-family:AmazDooMLeft2,sans-serif;font-size:32px;margin-right:20px}.death-container .data .score .score-span{padding:0 20px}.death-container .data .time .time-span{padding-right:25px}.death-container .retry{align-items:center;background-color:#000;border-radius:7px;color:#fff;cursor:pointer;display:flex;font-family:AmazDooMLeft2,sans-serif;font-size:32px;height:100px;justify-content:center;letter-spacing:15px;margin-top:50px;overflow:hidden;text-transform:uppercase;top:250px;width:250px}.start-menu{background:#00008b;background-image:url(pictures/worlds/stage1.png);height:540px;left:0;position:absolute;top:0;width:960px;z-index:4}.start-menu .start-menu-background{-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);color:#fff;display:flex}.start-menu .start-menu-background .start-menu-leaderboard{display:flex;flex-direction:column;height:480px;justify-content:space-between;margin-left:80px;margin-top:50px;width:300px}.start-menu .start-menu-background .start-menu-leaderboard .start-menu-title{font-size:9rem}.start-menu .start-menu-background .start-menu-leaderboard .start-menu-credit{background-image:url(pictures/ui/menu/CreditsText.png);background-position:50%;background-repeat:no-repeat;background-size:contain;cursor:pointer;height:100px;width:200px}.start-menu .start-menu-background .start-menu-leaderboard .start-menu-credit:hover{background-image:url(pictures/ui/menu/CreditsTextSelected.png)}.start-menu .start-menu-background .start-menu-logo{height:450px;margin-top:30px;width:200px}.start-menu .start-menu-background .start-menu-box-right{align-items:center;display:flex;flex-direction:column;height:540px;justify-content:space-around;width:340px}.start-menu .start-menu-background .start-menu-box-right .start-menu-regles{color:#fff;font-family:AmazDooMLeft2,sans-serif;font-size:1.7rem;text-align:center;text-shadow:1px #000}.start-menu .start-menu-background .start-menu-box-right .start-menu-touches{display:flex;font-size:1.6rem;gap:25px}.start-menu .start-menu-background .start-menu-box-right .start-menu-touches img{height:75px;width:75px}.start-menu .start-menu-background .start-menu-box-right .start-menu-touches .start-menu-touche-click,.start-menu .start-menu-background .start-menu-box-right .start-menu-touches .start-menu-touche-e,.start-menu .start-menu-background .start-menu-box-right .start-menu-touches .start-menu-touche-pause,.start-menu .start-menu-background .start-menu-box-right .start-menu-touches .start-menu-touche-space{font-size:1.6rem;text-align:center}.start-menu .start-menu-background .start-menu-box-right .start-menu-btn{background-image:url(pictures/ui/menu/StartText.png);background-position:50%;background-repeat:no-repeat;background-size:contain;cursor:pointer;height:100px;width:200px}.start-menu .start-menu-background .start-menu-box-right .start-menu-btn:hover{background-image:url(pictures/ui/menu/StartTextSelected.png)}.victory{align-items:center;-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);bottom:0;cursor:pointer;display:flex;height:540px;justify-content:center;left:0;position:absolute;right:0;top:0;width:960px;z-index:4}.fond{filter:blur(20px)}.pause{align-items:center;-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);display:flex;flex-direction:column;font-family:AmazDooMLeft2,sans-serif;font-size:4rem;height:calc(100% + 16px);height:540px;justify-content:center;left:-10px;margin:10px;position:absolute;top:-10px;width:calc(100% + 16px);width:960px;z-index:3}.pause p{margin-top:50px}.pause .ctn-btn{align-items:center;display:flex;height:100%;justify-content:center;justify-content:space-around;width:100%}.pause button{border-radius:10px;font-family:AmazDooMLeft2,sans-serif;font-size:3rem;padding:5px}.credits{align-items:center;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);display:flex;justify-content:center;z-index:5}.credits,.level{bottom:0;cursor:pointer;left:0;position:absolute;right:0;top:0}.level{-webkit-backdrop-filter:blur(30px);backdrop-filter:blur(30px);height:540px;width:960px;z-index:4}.level .levelup{align-items:center;display:flex;flex-direction:column;font-size:4rem;height:100%;justify-content:center;width:100%}@keyframes animlevel{0%{opacity:0}50%{opacity:1}to{opacity:0}}#goty{left:-15px;position:absolute;top:-15px;transform:rotate(-45deg);width:100px;z-index:9}#goty img{height:100%;-o-object-fit:contain;object-fit:contain;-o-object-position:center center;object-position:center center;width:100%}
+/**
+ * Simple Reset
+ */
+*,
+::before,
+::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+[hidden] {
+  display: none !important;
+}
+html {
+  font-size: 16px;
+  line-height: 1.2;
+  scroll-behavior: smooth;
+}
+body {
+  font-family: "AmazDooMLeft2", sans-serif;
+  min-height: 100vh;
+  background-color: #333;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+#game {
+  position: relative;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+#game > .killed {
+  position: absolute;
+  z-index: 2;
+  bottom: 8px;
+  left: 8px;
+}
+#game > .heart {
+  position: absolute;
+  z-index: 2;
+  bottom: 8px;
+  right: 8px;
+}
+#game svg {
+  filter: drop-shadow(6px 6px 5px #000);
+}
+#game-world {
+  position: relative;
+  z-index: 1;
+  margin: 0 auto;
+  background: #333;
+  outline: 2px solid rgb(153, 2, 2);
+  background-repeat: repeat;
+  background-position-y: 0;
+  background-image: url("./pictures/worlds/stage1.png");
+}
+#game-world[data-stage="2"] {
+  background-image: url("./pictures/worlds/stage2.png");
+}
+#game-world[data-stage="3"] {
+  background-image: url("./pictures/worlds/stage3.png");
+}
+#game-world[data-stage="4"] {
+  background-image: url("./pictures/worlds/stage4.png");
+}
+#game-world[data-stage="5"] {
+  background-image: url("./pictures/worlds/stage5.png");
+}
+#game-world[data-stage="6"] {
+  background-image: url("./pictures/worlds/stage6.png");
+}
+#game-world[data-stage="7"] {
+  background-image: url("./pictures/worlds/stage7.png");
+}
+#game-world[data-stage="8"] {
+  background-image: url("./pictures/worlds/stage8.png");
+}
+#audioplayers {
+  position: fixed;
+  z-index: -1000;
+  right: 500vw;
+  top: -500vh;
+}
+.killed {
+  color: #ddd;
+  font-size: 32px;
+  font-family: "AmazDooMLeft2", sans-serif;
+  text-shadow: 6px 6px 5px #000;
+}
+.killed .killed-span {
+  margin-left: 4px;
+}
+.heart {
+  color: #990202;
+  font-size: 32px;
+  font-family: "AmazDooMLeft2", sans-serif;
+  text-shadow: 6px 6px 5px #000;
+}
+.data {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: "AmazDooMLeftOutline", sans-serif;
+  padding: 8px;
+  text-shadow: 6px 6px 5px #000;
+}
+.data .time {
+  color: #ff0000;
+  text-transform: uppercase;
+  letter-spacing: 10px;
+  font-family: "Times New Roman", serif;
+  font-family: "AmazDooMLeft2", sans-serif;
+  font-size: 32px;
+}
+.data .score {
+  color: rgba(0, 255, 0, 0.7450980392);
+  text-transform: uppercase;
+  letter-spacing: 10px;
+  font-family: "AmazDooMLeft2", sans-serif;
+  font-size: 32px;
+}
+.data #lives {
+  position: absolute;
+  left: calc(50% - 50px);
+  top: -16px;
+  width: 80px;
+  height: 80px;
+  font-family: "AmazDooMLeft2", sans-serif;
+  color: #990202;
+  background-size: contain;
+  background-position: center center;
+  filter: drop-shadow(6px 6px 5px #000);
+  font-size: 36px;
+}
+.data #lives[data-lives] {
+  background-image: url("./pictures/ui/hp/1.png");
+}
+.data #lives[data-lives="4"] {
+  background-image: url("./pictures/ui/hp/2.png");
+}
+.data #lives[data-lives="3"] {
+  background-image: url("./pictures/ui/hp/3.png");
+}
+.data #lives[data-lives="2"] {
+  background-image: url("./pictures/ui/hp/4.png");
+}
+.data #lives[data-lives="1"], .data #lives[data-lives="0"] {
+  background-image: url("./pictures/ui/hp/5.png");
+}
+.death-container {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  opacity: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  width: 960px;
+  height: 540px;
+}
+.death-container .death-image {
+  margin-top: 200px;
+  width: 480px;
+  height: 180px;
+  background: url(./assets/pictures/ui/menu/DeadText.png);
+}
+.death-container .data {
+  padding: 50px 16px 0 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  letter-spacing: 5px;
+}
+.death-container .retry {
+  font-size: 32px;
+  cursor: pointer;
+  margin-top: 50px;
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 7px;
+  background-color: black;
+  color: white;
+  width: 250px;
+  height: 100px;
+  text-transform: uppercase;
+  letter-spacing: 15px;
+  overflow: hidden;
+  font-family: "AmazDooMLeft2", sans-serif;
+}
+.start-menu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 960px;
+  height: 540px;
+  z-index: 4;
+  background-image: url(./pictures/worlds/stage1.png);
+}
+.start-menu .start-menu-background {
+  display: flex;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  color: white;
+}
+.start-menu .start-menu-background .start-menu-leaderboard {
+  width: 300px;
+  height: 480px;
+  margin-left: 80px;
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.start-menu .start-menu-background .start-menu-leaderboard .start-menu-title {
+  font-size: 9rem;
+}
+.start-menu .start-menu-background .start-menu-leaderboard .start-menu-credit {
+  cursor: pointer;
+  background-image: url(./pictures/ui/menu/CreditsText.png);
+  width: 200px;
+  height: 100px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+.start-menu .start-menu-background .start-menu-leaderboard .start-menu-credit:hover {
+  background-image: url(./pictures/ui/menu/CreditsTextSelected.png);
+}
+.start-menu .start-menu-background .start-menu-logo {
+  width: 200px;
+  height: 450px;
+  margin-top: 30px;
+}
+.start-menu .start-menu-background .start-menu-box-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  width: 340px;
+  height: 540px;
+}
+.start-menu .start-menu-background .start-menu-box-right .start-menu-regles {
+  font-family: "AmazDooMLeft2", sans-serif;
+  font-size: 1.7rem;
+  color: white;
+  text-shadow: 1px black;
+  text-align: center;
+}
+.start-menu .start-menu-background .start-menu-box-right .start-menu-touches {
+  display: flex;
+  gap: 25px;
+  font-size: 1.6rem;
+}
+.start-menu .start-menu-background .start-menu-box-right .start-menu-touches img {
+  width: 75px;
+  height: 75px;
+}
+.start-menu .start-menu-background .start-menu-box-right .start-menu-touches .start-menu-touche-e {
+  font-size: 1.6rem;
+  text-align: center;
+}
+.start-menu .start-menu-background .start-menu-box-right .start-menu-touches .start-menu-touche-click {
+  font-size: 1.6rem;
+  text-align: center;
+}
+.start-menu .start-menu-background .start-menu-box-right .start-menu-touches .start-menu-touche-space {
+  font-size: 1.6rem;
+  text-align: center;
+}
+.start-menu .start-menu-background .start-menu-box-right .start-menu-touches .start-menu-touche-pause {
+  font-size: 1.6rem;
+  text-align: center;
+}
+.start-menu .start-menu-background .start-menu-box-right .start-menu-btn {
+  cursor: pointer;
+  background-image: url(./pictures/ui/menu/StartText.png);
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 200px;
+  height: 100px;
+  cursor: pointer;
+}
+.start-menu .start-menu-background .start-menu-box-right .start-menu-btn:hover {
+  background-image: url(./pictures/ui/menu/StartTextSelected.png);
+}
+.victory {
+  width: 960px;
+  height: 540px;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  cursor: pointer;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.victory .data {
+  padding: 50px 16px 0 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  letter-spacing: 5px;
+}
+.victory .data .killed-span {
+  margin-left: 4px;
+}
+.fond {
+  filter: blur(20px);
+}
+.pause {
+  position: absolute;
+  z-index: 3;
+  top: -10px;
+  left: -10px;
+  width: calc(100% + 16px);
+  height: calc(100% + 16px);
+  font-family: "AmazDooMLeft2", sans-serif;
+  width: 960px;
+  height: 540px;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  font-size: 4rem;
+}
+.pause p {
+  margin: 64px 0;
+}
+.pause .ctn-btn {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+}
+.pause .ctn-btn:not(:hover) svg:nth-child(even), .pause .ctn-btn:hover svg:nth-child(odd) {
+  display: none;
+}
+.credits {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 5;
+}
+.level {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 4;
+  width: 960px;
+  height: 540px;
+  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(30px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.level .levelup {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20%;
+}
+.level .stats {
+  margin: auto 0 32px 0;
+  font-size: 32px;
+  letter-spacing: 5px;
+  font-family: "AmazDooMLeft2", sans-serif;
+  text-shadow: 6px 6px 5px #000;
+  display: flex;
+  justify-content: space-evenly;
+}
+.level .stats .score {
+  color: green;
+}
+.level .stats .lives {
+  color: red;
+}
+@keyframes animlevel {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+#goty {
+  position: absolute;
+  width: 100px;
+  left: -15px;
+  top: -15px;
+  z-index: 9;
+  transform: rotate(-45deg);
+}
+#goty img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+  object-fit: contain;
+  -o-object-position: center center;
+  object-position: center center;
+}
+/*# sourceMappingURL=main.css.map */
